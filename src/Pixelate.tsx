@@ -10,29 +10,28 @@ import {
 /* ------------------------------------------------------------------ *
  * Pixelate
  *
- * Wrap any page and render it through an SVG pixelation filter, so the
- * whole thing looks like a censored / low-res mosaic. Move the pointer
- * over it and a circular "defog" lens reveals the crisp original under
- * your cursor — like wiping fog off a window. A slider controls the
- * block size; a toggle reveals everything at once.
+ * 任意のページをラップし、SVG のモザイクフィルタを通して描画することで、
+ * 全体が検閲済み / 低解像度のモザイクのように見える。ポインターを乗せると
+ * 円形の「曇り取り」レンズがカーソル下の鮮明な元の表示を露わにする——
+ * ちょうど窓の曇りを拭うように。スライダーでブロックサイズを調整でき、
+ * トグルで一気に全体を露わにできる。
  *
- * No rasterisation, no canvas, no html2canvas: the mosaic is a real CSS
- * `filter: url(#…)` over the live DOM, and the lens is a second copy of
- * the children clipped to a circle. Because it's the live DOM, the page
- * underneath stays interactive through the lens.
+ * ラスタライズも canvas も html2canvas も不要: モザイクはライブ DOM に
+ * かけた本物の CSS `filter: url(#…)`、レンズは子要素を円形にクリップした
+ * 2 つ目のコピー。ライブ DOM なので、レンズ越しに下のページを操作できる。
  * ------------------------------------------------------------------ */
 
 export interface PixelateProps {
   children: ReactNode;
-  /** Mosaic block size in px (bigger = chunkier). @default 14 */
+  /** モザイクのブロックサイズ（px）。大きいほど粗くなる。@default 14 */
   size?: number;
-  /** Turn the effect off (children render normally). @default true */
+  /** 効果をオフにする（子要素は通常どおりレンダリングされる）。@default true */
   active?: boolean;
-  /** Reveal a crisp circle under the pointer. @default true */
+  /** ポインター下に鮮明な円を露わにする。@default true */
   lens?: boolean;
-  /** Radius of the reveal lens in px. @default 90 */
+  /** 露出レンズの半径（px）。@default 90 */
   lensRadius?: number;
-  /** Show the floating control bar (block-size slider / reveal toggle). @default true */
+  /** フローティングの操作バー（ブロックサイズのスライダー / 露出トグル）を表示する。@default true */
   controls?: boolean;
 }
 
@@ -50,7 +49,7 @@ export function Pixelate({
 
   const [px, setPx] = useState(size);
   const [revealed, setRevealed] = useState(false);
-  // Lens centre in host-local px; null when the pointer is away.
+  // ホストローカル座標（px）でのレンズ中心。ポインターが離れているときは null。
   const [lensPos, setLensPos] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => setPx(size), [size]);
@@ -78,10 +77,10 @@ export function Pixelate({
       onPointerLeave={() => setLensPos(null)}
       style={{ position: "relative", isolation: "isolate" }}
     >
-      {/* The pixelation filter. Regenerated whenever `px` changes:
-          feFlood samples one colour per cell, feTile repeats the cell
-          grid, the composite masks it to the source, and feMorphology
-          spreads each sample across its whole block. */}
+      {/* モザイクフィルタ。`px` が変わるたびに再生成する:
+          feFlood がセルごとに 1 色をサンプリングし、feTile がセルの
+          グリッドを繰り返し、composite がソースの形にマスクし、
+          feMorphology が各サンプルをブロック全体に広げる。 */}
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
         <defs>
           <filter id={filterId} x="0" y="0" width="100%" height="100%">
@@ -94,12 +93,12 @@ export function Pixelate({
         </defs>
       </svg>
 
-      {/* Base layer: the whole page, mosaicked (unless fully revealed). */}
+      {/* ベースレイヤー: ページ全体をモザイク化（完全露出時を除く）。 */}
       <div
         style={{
           filter: revealed ? undefined : `url(#${filterId})`,
-          // The mosaicked copy is just scenery; clicks go to the crisp
-          // copy on top so the real page stays usable through the lens.
+          // モザイク化したコピーは背景にすぎない。クリックは上にある鮮明な
+          // コピーへ渡るので、レンズ越しに実際のページを操作できる。
           pointerEvents: revealed ? "auto" : "none",
           userSelect: revealed ? "auto" : "none",
         }}
@@ -107,7 +106,7 @@ export function Pixelate({
         {children}
       </div>
 
-      {/* Lens layer: a crisp copy clipped to a circle under the pointer. */}
+      {/* レンズレイヤー: ポインター下の円形にクリップした鮮明なコピー。 */}
       {showLens && (
         <div
           aria-hidden
@@ -119,7 +118,7 @@ export function Pixelate({
           }}
         >
           {children}
-          {/* A faint ring around the lens so it reads as a lens. */}
+          {/* レンズらしく見えるよう、周囲にうっすらとした輪を描く。 */}
           <div
             style={{
               position: "absolute",
@@ -179,7 +178,7 @@ export function Pixelate({
               cursor: "pointer",
             }}
           >
-            {revealed ? "🟦 Pixelate" : "👓 Reveal"}
+            {revealed ? "🟦 モザイク" : "👓 解除"}
           </button>
         </div>
       )}

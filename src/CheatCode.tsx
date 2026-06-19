@@ -10,17 +10,17 @@ import {
 /* ------------------------------------------------------------------ *
  * CheatCode
  *
- * The classic hidden easter egg: wrap any page, type the secret button
- * sequence (the famous ↑ ↑ ↓ ↓ ← → ← → B A) and it unlocks — a confetti
- * burst, a cheeky rainbow shimmer over the page, and whatever `secret`
- * content you passed (or a default 🎉 banner). `Esc` puts it away again.
+ * 定番の隠しイースターエッグ。任意のページをラップし、秘密のキー入力
+ * （有名な ↑ ↑ ↓ ↓ ← → ← → B A）を打ち込むと解除される。紙吹雪が舞い、
+ * ページ全体に虹色のきらめきがかかり、渡した `secret` の中身（または
+ * デフォルトの 🎉 バナー）が表示される。`Esc` で再び閉じる。
  *
- * Nothing is captured or cloned; children render completely normally
- * until (and after) the code fires, so it's safe to drop around a real
- * page. The only footprint is a single window `keydown` listener.
+ * 子要素はキャプチャもクローンもされず、コード発動の前後を通じて完全に
+ * 通常どおりレンダリングされるため、実際のページを囲んでも安全。残す
+ * 痕跡は window への `keydown` リスナー 1 つだけ。
  * ------------------------------------------------------------------ */
 
-/** The canonical sequence, using KeyboardEvent.key values. */
+/** 正式なキー入力シーケンス（KeyboardEvent.key の値を使用）。 */
 export const CHEAT_SEQUENCE = [
   "ArrowUp",
   "ArrowUp",
@@ -36,30 +36,30 @@ export const CHEAT_SEQUENCE = [
 
 export interface CheatCodeProps {
   children: ReactNode;
-  /** What to show once unlocked. Defaults to a celebratory banner. */
+  /** 解除されたときに表示する内容。デフォルトはお祝いのバナー。 */
   secret?: ReactNode;
-  /** Override the key sequence (KeyboardEvent.key values, case-insensitive). */
+  /** キー入力シーケンスを上書きする（KeyboardEvent.key の値、大文字小文字は無視）。 */
   code?: readonly string[];
-  /** Rain confetti on unlock. @default true */
+  /** 解除時に紙吹雪を降らせる。@default true */
   confetti?: boolean;
-  /** Give the whole page a brief rainbow shimmer on unlock. @default true */
+  /** 解除時にページ全体へ短い虹色のきらめきをかける。@default true */
   shimmer?: boolean;
-  /** Play a synthesised power-up jingle on unlock. @default true */
+  /** 解除時に合成したパワーアップ音を鳴らす。@default true */
   sound?: boolean;
-  /** Stay unlocked instead of toggling back off on a second entry. @default false */
+  /** 2 回目の入力で解除を切り替えず、解除したままにする。@default false */
   sticky?: boolean;
-  /** Fired each time the code completes. */
+  /** コードが完成するたびに発火する。 */
   onUnlock?: () => void;
 }
 
 type Confetto = {
   id: number;
   left: number; // vw
-  delay: number; // s
-  dur: number; // s
+  delay: number; // 秒
+  dur: number; // 秒
   color: string;
   size: number; // px
-  rot: number; // deg
+  rot: number; // 度
 };
 
 const CONFETTI_COLORS = [
@@ -89,7 +89,7 @@ export function CheatCode({
 
   const wanted = useMemo(() => code.map((k) => k.toLowerCase()), [code]);
 
-  // Lazily-created AudioContext for the unlock jingle (synthesised, no assets).
+  // 解除音用に遅延生成する AudioContext（音源ファイル不要の合成音）。
   const audioRef = useRef<AudioContext | null>(null);
   const playJingle = useCallback(() => {
     if (!sound) return;
@@ -104,7 +104,7 @@ export function CheatCode({
       audioRef.current = ctx;
     }
     if (ctx.state === "suspended") void ctx.resume();
-    // A rising 1-up style arpeggio.
+    // 1UP 風に上昇するアルペジオ。
     [659, 784, 988, 1319].forEach((freq, k) => {
       const t = ctx!.currentTime + k * 0.08;
       const osc = ctx!.createOscillator();
@@ -112,7 +112,7 @@ export function CheatCode({
       osc.type = "square";
       osc.frequency.setValueAtTime(freq, t);
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.08, t + 0.02);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
       osc.connect(g).connect(ctx!.destination);
       osc.start(t);
@@ -136,7 +136,7 @@ export function CheatCode({
       }));
       setBurst(pieces);
       window.setTimeout(() => {
-        // Only clear if no newer burst superseded this one.
+        // より新しい紙吹雪に置き換えられていない場合のみクリアする。
         if (burstId.current === id) setBurst([]);
       }, 4200);
     }
@@ -158,8 +158,8 @@ export function CheatCode({
           fire();
         }
       } else {
-        // Reset, but be forgiving: a wrong key that equals the *first*
-        // key counts as a fresh start (e.g. ↑ ↑ ↑ still progresses).
+        // リセットするが寛容に扱う。間違ったキーでも *先頭* のキーと一致すれば
+        // 新たな開始としてカウントする（例: ↑ ↑ ↑ でも進行する）。
         progress.current = e.key.toLowerCase() === wanted[0] ? 1 : 0;
       }
     };
@@ -177,7 +177,7 @@ export function CheatCode({
         {children}
       </div>
 
-      {/* Confetti rain */}
+      {/* 紙吹雪 */}
       {burst.length > 0 && (
         <div
           aria-hidden
@@ -208,7 +208,7 @@ export function CheatCode({
         </div>
       )}
 
-      {/* The secret payload */}
+      {/* 秘密のコンテンツ */}
       {unlocked && (
         <div
           style={{
@@ -252,7 +252,7 @@ function DefaultSecret({ onClose }: { onClose: () => void }) {
     >
       <div style={{ fontSize: 44 }}>🎉</div>
       <div style={{ fontSize: 24, fontWeight: 800, margin: "6px 0" }}>
-        30 lives unlocked!
+残機 30 機 解除！
       </div>
       <div style={{ opacity: 0.8, fontSize: 14 }}>
         隠しコマンド成功。<code>secret</code> prop で中身を差し替えられます。

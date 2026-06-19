@@ -11,34 +11,32 @@ import {
 /* ------------------------------------------------------------------ *
  * ShatterGlass
  *
- * Wrap any page; it looks completely normal until you click. The click
- * point becomes an impact: radial cracks race outwards, the display
- * fractures into glass shards, and every shard becomes a draggable
- * (and flingable) piece you can peel off to reveal what's underneath.
- * "🔧 Repair" snaps it all back together.
+ * 任意のページをラップする。クリックするまでは完全に普通に見える。
+ * クリック地点が衝撃点となり、放射状のひびが外へ走り、表示がガラスの
+ * 破片に砕け、各破片はドラッグ（そして放り投げ）できるピースになって、
+ * めくると下にあるものが見える。「🔧 Repair」ですべて元どおりに戻る。
  *
- * Geometry — full-coverage radial fracture:
- *   We shoot spokes out from the impact point. The four corners are
- *   *always* spokes, so between any two adjacent spokes both boundary
- *   hits land on the same rectangle edge → the outer shards tile the
- *   page edge-to-edge with no gaps. Along each spoke we place a few
- *   rings (fractions of the distance to the boundary); the innermost
- *   ring fans into triangles around the impact, the outer rings form
- *   quads. Every shard is a clipped copy of the children (same trick as
- *   JigsawPuzzle), so reassembled it's pixel-for-pixel the original.
+ * ジオメトリ — 全面を覆う放射状の破砕:
+ *   衝撃点から放射状にスポークを伸ばす。4 つの角は *必ず* スポークに
+ *   なるので、隣り合う 2 本のスポークの間では両端の境界ヒットが同じ
+ *   矩形の辺に落ちる → 外側の破片が隙間なくページを端まで敷き詰める。
+ *   各スポークに沿っていくつかのリング（境界までの距離の割合）を置く。
+ *   最も内側のリングは衝撃点を中心に三角形へ広がり、外側のリングは
+ *   四角形を作る。各破片は子要素をクリップしたコピー（JigsawPuzzle と
+ *   同じ仕掛け）なので、組み直せばピクセル単位で元のページに戻る。
  * ------------------------------------------------------------------ */
 
 type Pt = [number, number];
 
 export type Shard = {
-  /** Polygon points in host-local px. */
+  /** ホストローカル座標（px）でのポリゴンの頂点。 */
   poly: Pt[];
-  /** Centroid (transform origin + fling direction reference). */
+  /** 重心（transform の原点 + 放り投げる方向の基準）。 */
   cx: number;
   cy: number;
 };
 
-/** Ray from an interior point to the rectangle boundary, returning the hit. */
+/** 内部の点から矩形の境界へ伸ばしたレイ。当たった点を返す。 */
 function rayToRect(ix: number, iy: number, ang: number, w: number, h: number): Pt {
   const dx = Math.cos(ang);
   const dy = Math.sin(ang);
@@ -69,23 +67,23 @@ function buildShards(
   rings: number,
   jitter: number,
 ): Shard[] {
-  // Corner angles must be spokes so adjacent boundary hits share an edge.
+  // 隣り合う境界ヒットが辺を共有するよう、角の角度は必ずスポークにする。
   const corners = [
-    Math.atan2(-iy, -ix), // top-left
-    Math.atan2(-iy, w - ix), // top-right
-    Math.atan2(h - iy, w - ix), // bottom-right
-    Math.atan2(h - iy, -ix), // bottom-left
+    Math.atan2(-iy, -ix), // 左上
+    Math.atan2(-iy, w - ix), // 右上
+    Math.atan2(h - iy, w - ix), // 右下
+    Math.atan2(h - iy, -ix), // 左下
   ].map((a) => (a + Math.PI * 2) % (Math.PI * 2));
   corners.sort((a, b) => a - b);
 
-  // Within each corner-to-corner sector, drop in evenly spaced spokes.
+  // 角から角までの各セクター内に、等間隔のスポークを配置する。
   const per = Math.max(1, Math.round(spokes / 4));
   const angles: number[] = [];
   for (let k = 0; k < 4; k++) {
     const a0 = corners[k];
     let a1 = corners[(k + 1) % 4];
     if (a1 <= a0) a1 += Math.PI * 2;
-    angles.push(a0); // the corner spoke itself
+    angles.push(a0); // 角のスポークそのもの
     for (let s = 1; s < per; s++) {
       const f = s / per;
       const jit = (Math.random() * 2 - 1) * jitter * ((a1 - a0) / per);
@@ -94,13 +92,13 @@ function buildShards(
   }
   const A = angles.length;
 
-  // Distance fractions from impact (0) to boundary (1), with jitter.
+  // 衝撃点（0）から境界（1）までの距離の割合。揺らぎを加える。
   const fr: number[] = [];
   for (let r = 1; r <= rings; r++) {
     const base = r / rings;
     fr.push(base);
   }
-  // point[a][r]: ring r along spoke a (r index 0..rings-1).
+  // point[a][r]: スポーク a に沿ったリング r（r のインデックスは 0..rings-1）。
   const hit: Pt[] = angles.map((a) => rayToRect(ix, iy, a, w, h));
   const pt = (a: number, r: number): Pt => {
     const [hx, hy] = hit[a];
@@ -110,7 +108,7 @@ function buildShards(
     return [ix + (hx - ix) * f, iy + (hy - iy) * f];
   };
 
-  // Cache ring points so neighbouring shards share identical vertices.
+  // 隣り合う破片が同一の頂点を共有するよう、リングの点をキャッシュする。
   const grid: Pt[][] = angles.map((_, a) =>
     Array.from({ length: rings }, (_, r) => pt(a, r)),
   );
@@ -118,10 +116,10 @@ function buildShards(
   const shards: Shard[] = [];
   for (let a = 0; a < A; a++) {
     const a2 = (a + 1) % A;
-    // Innermost: triangle fan around the impact.
+    // 最も内側: 衝撃点を中心とした三角形のファン。
     const tri: Pt[] = [[ix, iy], grid[a][0], grid[a2][0]];
     shards.push({ poly: tri, ...centroidObj(tri) });
-    // Outer bands: quads between consecutive rings.
+    // 外側の帯: 連続するリングの間の四角形。
     for (let r = 0; r < rings - 1; r++) {
       const quad: Pt[] = [grid[a][r], grid[a2][r], grid[a2][r + 1], grid[a][r + 1]];
       shards.push({ poly: quad, ...centroidObj(quad) });
@@ -144,21 +142,21 @@ const ZERO: Transform = { x: 0, y: 0, rot: 0 };
 
 export interface ShatterGlassProps {
   children: ReactNode;
-  /** Turn the effect off (children render normally, no shatter). @default true */
+  /** 効果をオフにする（子要素は通常どおりレンダリングされ、砕けない）。@default true */
   active?: boolean;
-  /** Approximate number of radial spokes (rounded to a multiple of 4). @default 16 */
+  /** 放射状スポークのおおよその本数（4 の倍数に丸められる）。@default 16 */
   spokes?: number;
-  /** Number of concentric rings from impact to edge. @default 4 */
+  /** 衝撃点から端までの同心リングの数。@default 4 */
   rings?: number;
-  /** 0–1 irregularity of the crack pattern. @default 0.5 */
+  /** ひび模様の不規則さ 0–1。@default 0.5 */
   jitter?: number;
-  /** Let the user drag shards around after the shatter. @default true */
+  /** 砕けたあとユーザーが破片をドラッグできるようにする。@default true */
   draggable?: boolean;
-  /** Show the floating control bar (Repair / Drop). @default true */
+  /** フローティングの操作バー（Repair / Drop）を表示する。@default true */
   controls?: boolean;
-  /** Play a synthesised glass-break on impact. @default true */
+  /** 衝撃時に合成したガラスの割れる音を鳴らす。@default true */
   sound?: boolean;
-  /** Fired once when the glass first shatters. */
+  /** ガラスが最初に砕けたときに一度だけ発火する。 */
   onShatter?: () => void;
 }
 
@@ -175,7 +173,7 @@ export function ShatterGlass({
 }: ShatterGlassProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
-  // Impact point in fractional coords so it survives a resize.
+  // リサイズ後も保持できるよう、衝撃点を割合座標で保持する。
   const [impact, setImpact] = useState<{ fx: number; fy: number } | null>(null);
 
   useLayoutEffect(() => {
@@ -214,14 +212,14 @@ export function ShatterGlass({
     oy: number;
   } | null>(null);
 
-  // Reset transforms whenever the shard set changes (new impact / resize).
+  // 破片の集合が変わるたびに（新しい衝撃 / リサイズ）transform をリセットする。
   useEffect(() => {
     setTransforms(Array.from({ length: n }, () => ZERO));
     setZ(Array.from({ length: n }, () => 0));
     setZTop(1);
   }, [n]);
 
-  // --- glass-break sound (synthesised, no assets) ---
+  // --- ガラスの割れる音（音源ファイル不要の合成音） ---
   const audioRef = useRef<AudioContext | null>(null);
   const playBreak = useCallback(() => {
     if (!sound) return;
@@ -238,7 +236,7 @@ export function ShatterGlass({
     if (ctx.state === "suspended") void ctx.resume();
     const now = ctx.currentTime;
 
-    // Impact: a short bright noise burst.
+    // 衝撃: 短く明るいノイズバースト。
     const len = Math.ceil(ctx.sampleRate * 0.18);
     const buf = ctx.createBuffer(1, len, ctx.sampleRate);
     const data = buf.getChannelData(0);
@@ -249,13 +247,13 @@ export function ShatterGlass({
     hp.type = "highpass";
     hp.frequency.value = 2000;
     const g = ctx.createGain();
-    g.gain.setValueAtTime(0.5, now);
+    g.gain.setValueAtTime(0.22, now);
     g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
     src.connect(hp).connect(g).connect(ctx.destination);
     src.start(now);
     src.stop(now + 0.2);
 
-    // Tinkles: a scatter of tiny high pings, like falling shards.
+    // チリンチリン: 落ちる破片のような、高く小さな音の散らばり。
     for (let k = 0; k < 9; k++) {
       const t = now + 0.03 + Math.random() * 0.4;
       const osc = ctx.createOscillator();
@@ -263,7 +261,7 @@ export function ShatterGlass({
       osc.type = "triangle";
       osc.frequency.setValueAtTime(2200 + Math.random() * 3500, t);
       og.gain.setValueAtTime(0.0001, t);
-      og.gain.exponentialRampToValueAtTime(0.12, t + 0.005);
+      og.gain.exponentialRampToValueAtTime(0.06, t + 0.005);
       og.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
       osc.connect(og).connect(ctx.destination);
       osc.start(t);
@@ -282,7 +280,7 @@ export function ShatterGlass({
 
   const repair = useCallback(() => setImpact(null), []);
 
-  /** Fling every shard outward from the impact, with gravity & spin. */
+  /** すべての破片を衝撃点から外へ、重力と回転を付けて放り投げる。 */
   const drop = useCallback(() => {
     if (!impact || size.w === 0) return;
     const ix = impact.fx * size.w;
@@ -293,14 +291,14 @@ export function ShatterGlass({
         const push = 60 + Math.random() * 140;
         return {
           x: Math.cos(ang) * push,
-          y: Math.sin(ang) * push + 220 + Math.random() * 260, // gravity bias
+          y: Math.sin(ang) * push + 220 + Math.random() * 260, // 重力による下向きバイアス
           rot: (Math.random() * 2 - 1) * 90,
         };
       }),
     );
   }, [impact, size.w, size.h, shards]);
 
-  // Global drag handlers.
+  // グローバルなドラッグハンドラ。
   useEffect(() => {
     if (!draggable) return;
     const move = (e: PointerEvent) => {
@@ -354,9 +352,9 @@ export function ShatterGlass({
         cursor: shattered ? "default" : "crosshair",
       }}
     >
-      {/* Intact view: the real, interactive page. Clicking shatters it.
-          Once shattered we hide it (but keep it for layout sizing) and
-          show the shard copies instead. */}
+      {/* 無傷の表示: 実際の操作可能なページ。クリックで砕ける。砕けたあとは
+          これを非表示にし（レイアウトのサイズ計算のために残す）、代わりに
+          破片のコピーを表示する。 */}
       <div
         onClick={(e) => {
           if (!shattered) shatterAt(e.clientX, e.clientY);
@@ -396,8 +394,8 @@ export function ShatterGlass({
                 }px rgba(0,0,0,0.45))`,
               }}
             >
-              {/* Clipped page copy. clip-path also clips hit-testing, so
-                  only the shard shape grabs the pointer. */}
+              {/* クリップされたページのコピー。clip-path はヒットテストも
+                  クリップするので、破片の形状だけがポインターを受け取る。 */}
               <div
                 onPointerDown={onShardPointerDown(i)}
                 style={{
@@ -414,7 +412,7 @@ export function ShatterGlass({
                 </div>
               </div>
 
-              {/* Crack edges: a bright glassy highlight along the shard. */}
+              {/* ひびの縁: 破片に沿った明るいガラス質のハイライト。 */}
               <svg
                 width={size.w}
                 height={size.h}
@@ -434,7 +432,7 @@ export function ShatterGlass({
           );
         })}
 
-      {/* Impact flash */}
+      {/* 衝撃のフラッシュ */}
       {shattered && (
         <div
           key={`${impact!.fx}-${impact!.fy}`}
@@ -476,10 +474,10 @@ export function ShatterGlass({
           }}
         >
           <button type="button" onClick={drop} style={btn("#0a9396")}>
-            💧 Drop
+            💧 落とす
           </button>
           <button type="button" onClick={repair} style={btn("#2d8f5a")}>
-            🔧 Repair
+            🔧 元に戻す
           </button>
         </div>
       )}

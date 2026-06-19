@@ -5,7 +5,7 @@ import { ShatterGlass } from "./ShatterGlass";
 import { CheatCode } from "./CheatCode";
 import { Pixelate } from "./Pixelate";
 
-/** A fake "real page" so each effect has something to chew on. */
+/** 各効果に題材を与えるための、偽の「実ページ」。 */
 function DemoPage({ hint }: { hint: string }) {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", color: "#1c1c1c" }}>
@@ -71,7 +71,7 @@ function DemoPage({ hint }: { hint: string }) {
 
 const DEMOS = {
   jigsaw: {
-    label: "🧩 Jigsaw",
+    label: "🧩 ジグソー",
     render: () => (
       <JigsawPuzzle rows={4} cols={6} onSolved={() => console.log("solved! 🎉")}>
         <DemoPage hint="ピースをドラッグして元の位置に戻すと、カチッとはまります。" />
@@ -79,7 +79,7 @@ const DEMOS = {
     ),
   },
   shatter: {
-    label: "💥 Shatter",
+    label: "💥 ガラス割れ",
     render: () => (
       <ShatterGlass onShatter={() => console.log("smash! 💥")}>
         <DemoPage hint="どこかをクリックすると、その場所からガラスのように割れます。" />
@@ -87,7 +87,7 @@ const DEMOS = {
     ),
   },
   cheat: {
-    label: "🎮 Cheat",
+    label: "🎮 隠しコマンド",
     render: () => (
       <CheatCode onUnlock={() => console.log("unlocked! 🎮")}>
         <DemoPage hint="↑ ↑ ↓ ↓ ← → ← → B A と入力してみてください。" />
@@ -95,7 +95,7 @@ const DEMOS = {
     ),
   },
   pixelate: {
-    label: "🟦 Pixelate",
+    label: "🟦 モザイク",
     render: () => (
       <Pixelate>
         <DemoPage hint="マウスを乗せると、その下だけくっきり見えます。" />
@@ -140,7 +140,7 @@ function App() {
         ))}
       </nav>
 
-      {/* Remount on switch so each effect starts fresh. */}
+      {/* 切り替え時に再マウントして、各効果を最初からやり直す。 */}
       <div key={active}>{DEMOS[active].render()}</div>
     </div>
   );
