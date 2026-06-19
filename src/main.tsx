@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import { JigsawPuzzle } from "./JigsawPuzzle";
+import { ShatterGlass } from "./ShatterGlass";
+import { CheatCode } from "./CheatCode";
+import { Pixelate } from "./Pixelate";
 
-/** A fake "real page" so the puzzle effect has something to chew on. */
-function DemoPage() {
+/** A fake "real page" so each effect has something to chew on. */
+function DemoPage({ hint }: { hint: string }) {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", color: "#1c1c1c" }}>
       <header
@@ -60,18 +63,91 @@ function DemoPage() {
       </main>
 
       <footer style={{ padding: "20px 32px", background: "#22223b", color: "#cfcfe0" }}>
-        © 2026 Acme Inc. — ピースをドラッグして元の位置に戻すと、カチッとはまります。
+        © 2026 Acme Inc. — {hint}
       </footer>
+    </div>
+  );
+}
+
+const DEMOS = {
+  jigsaw: {
+    label: "🧩 Jigsaw",
+    render: () => (
+      <JigsawPuzzle rows={4} cols={6} onSolved={() => console.log("solved! 🎉")}>
+        <DemoPage hint="ピースをドラッグして元の位置に戻すと、カチッとはまります。" />
+      </JigsawPuzzle>
+    ),
+  },
+  shatter: {
+    label: "💥 Shatter",
+    render: () => (
+      <ShatterGlass onShatter={() => console.log("smash! 💥")}>
+        <DemoPage hint="どこかをクリックすると、その場所からガラスのように割れます。" />
+      </ShatterGlass>
+    ),
+  },
+  cheat: {
+    label: "🎮 Cheat",
+    render: () => (
+      <CheatCode onUnlock={() => console.log("unlocked! 🎮")}>
+        <DemoPage hint="↑ ↑ ↓ ↓ ← → ← → B A と入力してみてください。" />
+      </CheatCode>
+    ),
+  },
+  pixelate: {
+    label: "🟦 Pixelate",
+    render: () => (
+      <Pixelate>
+        <DemoPage hint="マウスを乗せると、その下だけくっきり見えます。" />
+      </Pixelate>
+    ),
+  },
+} as const;
+
+type DemoKey = keyof typeof DEMOS;
+
+function App() {
+  const [active, setActive] = useState<DemoKey>("jigsaw");
+  return (
+    <div style={{ maxWidth: 980, margin: "40px auto", padding: "0 16px" }}>
+      <nav
+        style={{
+          display: "flex",
+          gap: 8,
+          marginBottom: 20,
+          flexWrap: "wrap",
+          fontFamily: "system-ui, sans-serif",
+        }}
+      >
+        {(Object.keys(DEMOS) as DemoKey[]).map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setActive(key)}
+            style={{
+              padding: "8px 16px",
+              border: "none",
+              borderRadius: 999,
+              background: active === key ? "#1c1c1c" : "#e7e7ee",
+              color: active === key ? "#fff" : "#1c1c1c",
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: "pointer",
+            }}
+          >
+            {DEMOS[key].label}
+          </button>
+        ))}
+      </nav>
+
+      {/* Remount on switch so each effect starts fresh. */}
+      <div key={active}>{DEMOS[active].render()}</div>
     </div>
   );
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <div style={{ maxWidth: 980, margin: "40px auto", padding: "0 16px" }}>
-      <JigsawPuzzle rows={4} cols={6} onSolved={() => console.log("solved! 🎉")}>
-        <DemoPage />
-      </JigsawPuzzle>
-    </div>
+    <App />
   </React.StrictMode>,
 );
