@@ -10,38 +10,35 @@ import {
 } from "react";
 
 /* ------------------------------------------------------------------ *
- * Geometry: build interlocking jigsaw piece paths.
+ * ジオメトリ: かみ合うジグソーピースのパスを生成する。
  *
- * The trick that makes everything tile perfectly: neighbouring pieces
- * share the *exact same* boundary curve. We generate every grid edge
- * once, then each piece is assembled from its 4 edges (two of them
- * walked in reverse). Because the curves are identical, a tab on one
- * piece is precisely the blank on its neighbour.
+ * すべてが隙間なくぴったり並ぶ仕掛け: 隣り合うピースは *まったく同じ*
+ * 境界曲線を共有する。各グリッドの辺を一度だけ生成し、各ピースはその
+ * 4 辺（うち 2 辺は逆向きにたどる）から組み立てる。曲線が同一なので、
+ * あるピースの凸（タブ）はそのまま隣のピースの凹（ブランク）になる。
  * ------------------------------------------------------------------ */
 
 type Pt = [number, number];
-/** A cubic segment ending at `p`, with control points `c1`,`c2`. */
+/** `p` で終わる 3 次セグメント。制御点は `c1`,`c2`。 */
 type Seg = { c1: Pt; c2: Pt; p: Pt };
 type Edge = { start: Pt; segs: Seg[] };
 
-/** A straight (degenerate cubic) segment to `p`. */
+/** `p` まで引く直線（退化した 3 次曲線）セグメント。 */
 function line(from: Pt, p: Pt): Seg {
   return { c1: from, c2: p, p };
 }
 
 /**
- * One classic jigsaw edge (three cubic Béziers), the shape you see on a
- * real boxed puzzle: a near-straight shoulder, a slight *undercut* into
- * the body, a pinched neck, then a big round ball, mirrored back. The
- * undercut is what makes the knob look like a ball on a stem rather than
- * a plain dome. Only depth and centre are lightly jittered, so pieces
- * stay clean and regular.
+ * 古典的なジグソーの辺 1 本（3 本の 3 次ベジェ曲線）。市販の箱入り
+ * パズルで見る形状: ほぼ直線の肩、本体側へのわずかな *えぐり*、くびれた
+ * 首、そして大きな丸い玉、を反対側へ鏡映する。このえぐりがあるおかげで
+ * 突起が単なるドームではなく「軸の上の玉」に見える。揺らぎを加えるのは
+ * 深さと中心だけなので、ピースは整って規則的なまま。
  *
- * Coordinates are parametric: `v` runs 0→1 along the edge, `w` is the
- * perpendicular displacement (× `sign` for knob direction).
- * `sign === 0` yields a straight border edge.
+ * 座標はパラメトリック: `v` は辺に沿って 0→1、`w` は垂直方向の変位
+ * （突起の向きは `sign` を掛けて決める）。`sign === 0` なら直線の縁の辺。
  *
- * `ax,ay` = unit vector along the edge, `px,py` = unit perpendicular.
+ * `ax,ay` = 辺に沿う単位ベクトル、`px,py` = 垂直方向の単位ベクトル。
  */
 function makeEdge(
   x0: number,
@@ -57,15 +54,15 @@ function makeEdge(
   const start: Pt = [x0, y0];
   if (sign === 0) return { start, segs: [line(start, [x0 + ax * L, y0 + ay * L])] };
 
-  const u = (k: number) => (rnd() * 2 - 1) * k; // small jitter in ±k
-  const t = 0.15; // knob half-width along the edge (narrow neck)
-  const hc = 1.8; // head control spread (× t) → ball overhangs the neck
-  const uc = 0.7; // undercut depth (× e) → crisp pinch, not an oval bulge
-  const D = 0.26 + u(0.02); // knob depth (perpendicular peak)
-  const e = D / 2.5; // perpendicular unit (peak ≈ 2.5·e = D)
-  const m = 0.5 + u(0.02); // knob centre along the edge
+  const u = (k: number) => (rnd() * 2 - 1) * k; // ±k の小さな揺らぎ
+  const t = 0.15; // 辺に沿った突起の半幅（くびれた首）
+  const hc = 1.8; // 頭部の制御点の広がり（× t）→ 玉が首より張り出す
+  const uc = 0.7; // えぐりの深さ（× e）→ 楕円のふくらみではなく鋭いくびれ
+  const D = 0.26 + u(0.02); // 突起の深さ（垂直方向のピーク）
+  const e = D / 2.5; // 垂直方向の単位（ピーク ≈ 2.5·e = D）
+  const m = 0.5 + u(0.02); // 辺に沿った突起の中心
 
-  // (v,w) -> absolute point.
+  // (v,w) を絶対座標の点へ変換する。
   const P = (v: number, w: number): Pt => [
     x0 + ax * L * v + px * L * w * sign,
     y0 + ay * L * v + py * L * w * sign,
@@ -74,27 +71,27 @@ function makeEdge(
   return {
     start: P(0, 0),
     segs: [
-      // shoulder, slight undercut, up to the pinched neck
+      // 肩、わずかなえぐり、くびれた首まで
       { c1: P(0.2, 0), c2: P(m, -e * uc), p: P(m - t, e) },
-      // the round ball, overhanging the neck on both sides
+      // 丸い玉。首の両側へ張り出す
       { c1: P(m - hc * t, 3 * e), c2: P(m + hc * t, 3 * e), p: P(m + t, e) },
-      // mirror: undercut again, back to the far corner
+      // 鏡映: もう一度えぐり、反対側の角へ戻る
       { c1: P(m, -e * uc), c2: P(0.8, 0), p: P(1, 0) },
     ],
   };
 }
 
-/** Horizontal edge from (x,y) going +x, length L. */
+/** (x,y) から +x 方向へ伸びる長さ L の水平な辺。 */
 function hEdge(x: number, y: number, L: number, sign: number, rnd: () => number): Edge {
   return makeEdge(x, y, 1, 0, 0, 1, L, sign, rnd);
 }
 
-/** Vertical edge from (x,y) going +y, length L. */
+/** (x,y) から +y 方向へ伸びる長さ L の垂直な辺。 */
 function vEdge(x: number, y: number, L: number, sign: number, rnd: () => number): Edge {
   return makeEdge(x, y, 0, 1, 1, 0, L, sign, rnd);
 }
 
-/** Walk an edge backwards (same curve, reversed direction). */
+/** 辺を逆向きにたどる（同じ曲線で方向だけ反転）。 */
 function reverse(e: Edge): Edge {
   const pts: Pt[] = [e.start, ...e.segs.map((s) => s.p)];
   const segs: Seg[] = [];
@@ -114,7 +111,7 @@ function edgesToPath(edges: Edge[]): string {
   return d + " Z";
 }
 
-// Small deterministic RNG so a given `seed` always cuts the same way.
+// 同じ `seed` なら必ず同じ切り方になる、小さな決定論的乱数生成器。
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
   return () => {
@@ -140,7 +137,7 @@ function buildPieces(
   const ch = h / rows;
   const sign = () => (rnd() < 0.5 ? -1 : 1);
 
-  // Horizontal grid edges H[i][j]: row line i (0..rows), cell column j.
+  // 水平方向のグリッド辺 H[i][j]: 行ライン i（0..rows）、セル列 j。
   const H: Edge[][] = [];
   for (let i = 0; i <= rows; i++) {
     H[i] = [];
@@ -149,7 +146,7 @@ function buildPieces(
       H[i][j] = hEdge(j * cw, i * ch, cw, border ? 0 : sign(), rnd);
     }
   }
-  // Vertical grid edges V[r][j]: column line j (0..cols), cell row r.
+  // 垂直方向のグリッド辺 V[r][j]: 列ライン j（0..cols）、セル行 r。
   const V: Edge[][] = [];
   for (let r = 0; r < rows; r++) {
     V[r] = [];
@@ -163,10 +160,10 @@ function buildPieces(
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const d = edgesToPath([
-        H[r][c], // top    : left -> right
-        V[r][c + 1], // right  : top  -> bottom
-        reverse(H[r + 1][c]), // bottom : right -> left
-        reverse(V[r][c]), // left   : bottom -> top
+        H[r][c], // 上    : 左 -> 右
+        V[r][c + 1], // 右    : 上 -> 下
+        reverse(H[r + 1][c]), // 下    : 右 -> 左
+        reverse(V[r][c]), // 左    : 下 -> 上
       ]);
       pieces.push({ r, c, cx: (c + 0.5) * cw, cy: (r + 0.5) * ch, d });
     }
@@ -175,7 +172,7 @@ function buildPieces(
 }
 
 /* ------------------------------------------------------------------ *
- * Component
+ * コンポーネント
  * ------------------------------------------------------------------ */
 
 type Transform = { x: number; y: number; rot: number };
@@ -183,23 +180,23 @@ const ZERO: Transform = { x: 0, y: 0, rot: 0 };
 
 export interface JigsawPuzzleProps {
   children: ReactNode;
-  /** Number of puzzle rows. @default 4 */
+  /** パズルの行数。@default 4 */
   rows?: number;
-  /** Number of puzzle columns. @default 6 */
+  /** パズルの列数。@default 6 */
   cols?: number;
-  /** Turn the effect on/off. When off, children render normally. @default true */
+  /** 効果のオン/オフ。オフのとき子要素は通常どおりレンダリングされる。@default true */
   active?: boolean;
-  /** Start the game with the pieces shuffled. @default true */
+  /** ピースをシャッフルした状態でゲームを開始する。@default true */
   scattered?: boolean;
-  /** Let the user drag pieces around. @default true */
+  /** ユーザーがピースをドラッグできるようにする。@default true */
   draggable?: boolean;
-  /** Show the floating control bar (Shuffle / Solve / progress). @default true */
+  /** フローティングの操作バー（Shuffle / Solve / 進捗）を表示する。@default true */
   controls?: boolean;
-  /** Re-cut the puzzle differently. @default 1 */
+  /** パズルの切り方を変える。@default 1 */
   seed?: number;
-  /** Play a synthesised click when a piece snaps home. @default true */
+  /** ピースが定位置にはまったときに合成したクリック音を鳴らす。@default true */
   sound?: boolean;
-  /** Fired once every piece is locked in place. */
+  /** すべてのピースが定位置に固定されたときに一度だけ発火する。 */
   onSolved?: () => void;
 }
 
@@ -219,7 +216,7 @@ export function JigsawPuzzle({
   const hostRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
-  // Measure the host so piece geometry matches the real rendered area.
+  // ピースのジオメトリが実際の描画領域と一致するようホスト要素を計測する。
   useLayoutEffect(() => {
     const el = hostRef.current;
     if (!el) return;
@@ -233,7 +230,7 @@ export function JigsawPuzzle({
 
   const cw = cols > 0 ? size.w / cols : 0;
   const ch = rows > 0 ? size.h / rows : 0;
-  // How close (px) a piece must be to its home before it snaps & locks.
+  // ピースが定位置にスナップして固定されるまでに、どれだけ近づく必要があるか（px）。
   const snap = Math.max(30, Math.min(cw, ch) * 0.5);
 
   const pieces = useMemo(
@@ -244,12 +241,12 @@ export function JigsawPuzzle({
 
   const [transforms, setTransforms] = useState<Transform[]>([]);
   const [locked, setLocked] = useState<boolean[]>([]);
-  const [zTop, setZTop] = useState(1); // running counter to raise the active piece
+  const [zTop, setZTop] = useState(1); // アクティブなピースを前面に出すための連番カウンター
   const [z, setZ] = useState<number[]>([]);
-  // While dragging, true when the held piece is within snapping range of home.
+  // ドラッグ中、持っているピースが定位置のスナップ範囲内にあるとき true。
   const [snapReady, setSnapReady] = useState(false);
 
-  // Lazily-created AudioContext for the snap "click" (synthesised, no assets).
+  // スナップ時の「カチッ」音用に遅延生成する AudioContext（音源ファイル不要の合成音）。
   const audioRef = useRef<AudioContext | null>(null);
   const getAudio = useCallback(() => {
     if (!sound) return null;
@@ -267,21 +264,21 @@ export function JigsawPuzzle({
     return ctx;
   }, [sound]);
 
-  // A dry mechanical "カチッ": two very short, sharp noise transients (the
-  // "ka" then the "tchi") with fast decay — no pitched tone, so it reads as
-  // a hard click/clack rather than a "pyu" sweep.
+  // 乾いた機械的な「カチッ」: 非常に短く鋭いノイズの過渡音を 2 つ（「カ」
+  // その後「チ」）、素早く減衰させる。音程のあるトーンを使わないので、
+  // 「ピュッ」というスイープではなく硬いクリック/カチャという音に聞こえる。
   const playClick = useCallback(() => {
     const ctx = getAudio();
     if (!ctx) return;
     const now = ctx.currentTime;
 
-    // One short filtered noise burst (an impulsive "tick").
+    // フィルタを通した短いノイズバースト 1 回（衝撃的な「チッ」音）。
     const tick = (at: number, dur: number, freq: number, q: number, peak: number) => {
       const len = Math.max(1, Math.ceil(ctx.sampleRate * dur));
       const buf = ctx.createBuffer(1, len, ctx.sampleRate);
       const data = buf.getChannelData(0);
       for (let i = 0; i < len; i++) {
-        data[i] = (Math.random() * 2 - 1) * (1 - i / len); // white noise, linear fade
+        data[i] = (Math.random() * 2 - 1) * (1 - i / len); // ホワイトノイズ、線形フェード
       }
       const src = ctx.createBufferSource();
       src.buffer = buf;
@@ -291,20 +288,20 @@ export function JigsawPuzzle({
       bp.Q.value = q;
       const hp = ctx.createBiquadFilter();
       hp.type = "highpass";
-      hp.frequency.value = 1400; // strip low rumble -> crisp click
+      hp.frequency.value = 1400; // 低い唸りを除去 -> くっきりしたクリック音
       const g = ctx.createGain();
-      g.gain.setValueAtTime(peak, at); // instant attack
+      g.gain.setValueAtTime(peak, at); // 瞬時のアタック
       g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
       src.connect(bp).connect(hp).connect(g).connect(ctx.destination);
       src.start(at);
       src.stop(at + dur + 0.005);
     };
 
-    tick(now, 0.012, 2700, 1.1, 0.5); // "ka" — brighter, slightly longer
-    tick(now + 0.022, 0.008, 3500, 1.4, 0.38); // "tchi" — sharper, quieter
+    tick(now, 0.012, 2700, 1.1, 0.5); // 「カ」— 明るめで少し長い
+    tick(now + 0.022, 0.008, 3500, 1.4, 0.38); // 「チ」— 鋭く小さめ
   }, [getAudio]);
 
-  // A little 3-note flourish when the whole puzzle is finished.
+  // パズル全体が完成したときの 3 音の小さなファンファーレ。
   const playWin = useCallback(() => {
     const ctx = getAudio();
     if (!ctx) return;
@@ -324,12 +321,12 @@ export function JigsawPuzzle({
   }, [getAudio]);
   const dragging = useRef<{
     i: number;
-    px: number; // pointer x at grab
-    py: number; // pointer y at grab
-    ox: number; // piece offset x at grab
-    oy: number; // piece offset y at grab
-    x: number; // live offset x
-    y: number; // live offset y
+    px: number; // つかんだ時点のポインター x
+    py: number; // つかんだ時点のポインター y
+    ox: number; // つかんだ時点のピースのオフセット x
+    oy: number; // つかんだ時点のピースのオフセット y
+    x: number; // 現在のオフセット x
+    y: number; // 現在のオフセット y
   } | null>(null);
 
   const placed = locked.filter(Boolean).length;
@@ -353,7 +350,7 @@ export function JigsawPuzzle({
     setLocked(pieces.map(() => true));
   }, [pieces]);
 
-  // (Re)initialise whenever the piece count changes (resize / re-cut).
+  // ピース数が変わるたびに（リサイズ / 切り直し）初期化（再初期化）する。
   useEffect(() => {
     if (n === 0) return;
     setZ(Array.from({ length: n }, () => 0));
@@ -366,7 +363,7 @@ export function JigsawPuzzle({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [n, scattered]);
 
-  // Fire onSolved once when the board is completed.
+  // ボードが完成したときに onSolved を一度だけ発火する。
   const wasSolved = useRef(false);
   useEffect(() => {
     if (solved && !wasSolved.current) {
@@ -378,7 +375,7 @@ export function JigsawPuzzle({
     }
   }, [solved, onSolved, playWin]);
 
-  // Global pointer handlers: drag, then snap-and-lock on release.
+  // グローバルなポインターハンドラ: ドラッグし、離したときにスナップして固定する。
   useEffect(() => {
     if (!draggable) return;
     const move = (e: PointerEvent) => {
@@ -450,10 +447,10 @@ export function JigsawPuzzle({
       ref={hostRef}
       style={{ position: "relative", overflow: "visible", isolation: "isolate" }}
     >
-      {/* Hidden copy reserves the natural layout size. */}
+      {/* 非表示のコピーで自然なレイアウトサイズを確保する。 */}
       <div style={{ visibility: "hidden", pointerEvents: "none" }}>{children}</div>
 
-      {/* clipPath definitions, one per piece. */}
+      {/* clipPath の定義。ピースごとに 1 つ。 */}
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
         <defs>
           {pieces.map((p, i) => (
@@ -464,8 +461,8 @@ export function JigsawPuzzle({
         </defs>
       </svg>
 
-      {/* Home guide: faint silhouette of every piece at its target spot, so
-          the player can see where each piece belongs. Hidden once solved. */}
+      {/* 配置ガイド: 各ピースの目標位置に薄いシルエットを表示し、どこに
+          収まるかが分かるようにする。完成すると非表示になる。 */}
       {!solved && (
         <svg
           width={size.w}
@@ -496,16 +493,16 @@ export function JigsawPuzzle({
         </svg>
       )}
 
-      {/* One clipped copy of the page per piece, plus its outline. */}
+      {/* ピースごとにクリップしたページのコピー 1 つと、その輪郭線。 */}
       {pieces.map((p, i) => {
         const t = transforms[i] ?? ZERO;
         const isDragging = dragging.current?.i === i;
         const isLocked = locked[i];
         const isSnapping = isDragging && snapReady;
         return (
-          // Outer wrapper carries the transform only; it does NOT capture
-          // pointer events (it's a full-size rectangle). Hit-testing happens
-          // on the clipped layer below, whose shape == the piece shape.
+          // 外側のラッパーは transform だけを担い、ポインターイベントは
+          // 受け取らない（フルサイズの矩形だから）。ヒットテストは、形状が
+          // ピース形状と一致する下のクリップ済みレイヤーで行う。
           <div
             key={i}
             style={{
@@ -529,9 +526,9 @@ export function JigsawPuzzle({
                   }px rgba(0,0,0,0.4))`,
             }}
           >
-            {/* Clipped page content. clip-path also clips hit-testing, so
-                only the real piece shape grabs the pointer — clicks outside
-                fall through to whatever piece is actually underneath. */}
+            {/* クリップされたページの内容。clip-path はヒットテストもクリップ
+                するので、実際のピース形状だけがポインターを受け取り、外側の
+                クリックは下にある実際のピースへ素通りする。 */}
             <div
               onPointerDown={onPiecePointerDown(i)}
               style={{
@@ -546,7 +543,7 @@ export function JigsawPuzzle({
               <div style={{ pointerEvents: "none", userSelect: "none" }}>{children}</div>
             </div>
 
-            {/* piece outline (縁取り): light halo + dark line, drawn on top */}
+            {/* ピースの輪郭線（縁取り）: 明るいハロー + 暗い線を上に描く */}
             <svg
               width={size.w}
               height={size.h}
@@ -579,7 +576,7 @@ export function JigsawPuzzle({
         );
       })}
 
-      {/* Win banner */}
+      {/* クリア時のバナー */}
       {solved && (
         <div
           style={{
@@ -604,7 +601,7 @@ export function JigsawPuzzle({
               boxShadow: "0 10px 30px rgba(0,0,0,0.45)",
             }}
           >
-            🎉 Clear!
+🎉 クリア！
           </div>
         </div>
       )}
@@ -635,10 +632,10 @@ export function JigsawPuzzle({
             {placed} / {n}
           </span>
           <button type="button" onClick={shuffle} style={btn("#e8543f")}>
-            🔀 Shuffle
+            🔀 シャッフル
           </button>
           <button type="button" onClick={solve} style={btn("#2d8f5a")}>
-            🧩 Solve
+            🧩 そろえる
           </button>
         </div>
       )}
