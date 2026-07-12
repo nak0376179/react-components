@@ -1,9 +1,11 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
+import vue from "@vitejs/plugin-vue"
 
 export default defineConfig({
-  plugins: [react()],
+  // vue プラグインは csv-json feature の Vue 実装例（*.vue）のためだけに入れている。
+  plugins: [react(), vue()],
   server: {
     proxy: {
       "/api": {
