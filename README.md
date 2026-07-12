@@ -50,15 +50,17 @@ JS 側は **pnpm workspace**（`frontend`）、Python 側は **uv workspace**（
 /
 ├── frontend/            React/Vite アプリ（pnpm workspace パッケージ）
 │   └── src/
-│       ├── effects/       演出系コンポーネント + DemoPage（題材）
-│       ├── data-table/
-│       │   ├── components/   DataTable本体 / 2つのデモ / セル描画
-│       │   ├── hooks/        useEmployees / useEmployeesPage（データ取得）
-│       │   ├── employee.ts   Employeeモデル（型・ラベル）
-│       │   └── index.ts      公開バレル
-│       ├── App.tsx        タブでデモを切り替えるシェル
-│       └── main.tsx       QueryClientProvider でラップして起動
-├── backend/             FastAPI（/api/employees・/api/employees/all）※uv workspace member
+│       ├── app/            アプリシェル（ルータ + レイアウト、全 feature の demos を集約）
+│       ├── effects/        演出系コンポーネント（components/ + demo/ + demos.tsx）
+│       └── data-table/
+│           ├── components/   DataTable本体（汎用・ライブラリ本体）
+│           ├── demo/         2つのデモ（作成/編集/削除つき）+ セル描画
+│           ├── hooks/        useEmployees / useEmployeesPage / useEmployeeMutations
+│           ├── api.ts        fetch関数 + DEMO_GROUP_ID
+│           ├── employee.ts   Employeeモデル（型・ラベル）
+│           ├── demos.tsx     この feature のデモ登録
+│           └── index.ts      公開バレル
+├── backend/             FastAPI（/api/groups/{group_id}/employees の一覧・作成・更新・削除）※uv workspace member
 ├── infrastructure/      floci（docker-compose）+ テーブル作成/データ投入（boto3）+ データ仕様
 │   ├── data/employees.json   投入する87件（コミット済み）
 │   └── scripts/              create_table.py（設定）/ load_data.py（注入）
@@ -68,8 +70,9 @@ JS 側は **pnpm workspace**（`frontend`）、Python 側は **uv workspace**（
 └── pyproject.toml       ルート: uv workspace（backend / infrastructure）
 ```
 
-- 従業員の**型・ラベル**は [frontend/src/data-table/employee.ts](frontend/src/data-table/employee.ts)（フロント側）。
+- 従業員の**型・ラベル**は [frontend/src/data-table/employee.ts](frontend/src/data-table/employee.ts)（フロント側）。識別子は連番 `id` ではなく **`email`**。
 - **投入データと仕様**は infrastructure 側（[infrastructure/data/employees.json](infrastructure/data/employees.json) と [infrastructure/README.md](infrastructure/README.md)）。フロントは DB に直接触れず、データ取得はすべて backend の `/api` 経由。
+- `Employees` テーブルは `groupId`（テナントID）をパーティションキーにしたマルチテナント設計。一覧取得は `Scan` ではなく **`Query`** のみで行う（詳細は [infrastructure/README.md](infrastructure/README.md)）。デモは `group_a` に所属する人が自社データだけを見ている体で固定表示する。
 
 ---
 
@@ -90,12 +93,21 @@ import { DataTable } from "./data-table";
 | `initialPageSize` | `number`              | `10`     | 初期ページサイズ           |
 | `searchPlaceholder` | `string`            | `"検索…"` | 検索ボックスのプレースホルダ |
 
+バックエンドは `Employees` テーブルを `groupId`（テナントID）でパーティショニングしており、一覧取得は常に
+`Scan` ではなく `groupId` を条件にした **`Query`**（`GET /api/groups/{group_id}/employees`）。デモは
+`group_a` に所属する人が自社データだけを見ている体で固定表示する（[DEMO_GROUP_ID](frontend/src/data-table/api.ts)）。
+作成・更新・削除も同じテナントスコープの `POST` / `PUT` / `DELETE` で行う。
+
 デモは2種類:
 
-- **📊 データテーブル**（[DataTableDemo](frontend/src/data-table/DataTableDemo.tsx)）— backend の `/api/employees/all` で全件取得し、検索・ソート・ページングをすべてクライアント側で行う。
-- **🗄️ サーバページネーション**（[ServerPaginationDemo](frontend/src/data-table/ServerPaginationDemo.tsx)）— FastAPI の `/api/employees` にカーソル（`LastEvaluatedKey` を base64 化）を渡し、ページ単位で取得。検索は DynamoDB の `FilterExpression` でサーバー側実行。
+- **📊 データテーブル**（[DataTableDemo](frontend/src/data-table/demo/DataTableDemo.tsx)）— 一覧APIを `limit` 付きで
+  `nextCursor` が無くなるまでクライアント側でループ取得し（1レスポンスを小さく保ち API Gateway の 30秒/6MB 制限を
+  超えないため）、検索・ソート・ページングはすべてクライアント側で行う。追加・編集・削除の CRUD 操作つき。
+- **🗄️ サーバページネーション**（[ServerPaginationDemo](frontend/src/data-table/demo/ServerPaginationDemo.tsx)）—
+  一覧APIにカーソル（`LastEvaluatedKey` を base64 化）を渡し、ページ単位で取得（読み取り専用）。検索は DynamoDB の
+  `FilterExpression` でサーバー側実行。
 
-状態Chipや年収フォーマットなど、両デモ共通のセル描画は [employeeColumns.tsx](frontend/src/data-table/employeeColumns.tsx) に集約しています。
+状態Chipや年収フォーマットなど、両デモ共通のセル描画は [employeeColumns.tsx](frontend/src/data-table/demo/employeeColumns.tsx) に集約しています。
 
 ---
 

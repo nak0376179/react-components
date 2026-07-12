@@ -38,23 +38,30 @@ pnpm db:down    # floci 停止
 
 ### `Employees` テーブル
 
-- パーティションキー: `id`（数値 `N`）。ソートキーなし。
+- パーティションキー: `groupId`（文字列 `S`）— テナント（会社）ID。例: `"group_a"` / `"group_b"` / `"group_c"`。
+- ソートキー: `email`（文字列 `S`）— 従業員の識別子（連番 `id` は使わない）。
 - 課金モード: `PAY_PER_REQUEST`。
-- グローバル/ローカルセカンダリインデックスなし（検索はアプリ側の `Scan` + `FilterExpression`）。
+- GSI なし。
+
+`groupId` をパーティションキーにすることで、「自社（`groupId`）の従業員一覧」というアクセスパターンが
+`Scan` ではなく `Query`（`KeyConditionExpression: groupId = :自社`）だけで完結する。他社のデータを一切
+読まずに済むため、マルチテナントな一覧取得の定番パターンとして GSI を追加せずに実現できる。
+バックエンド（[backend/main.py](../backend/main.py)）は `Scan` を一切使わない。
 
 ### レコード（`data/employees.json`）
 
-87 件の擬似従業員データ。1 レコードは以下の属性を持ちます。
+87 件の擬似従業員データ（3テナント × 29件）。1 レコードは以下の属性を持ちます。
 
-| 属性         | 型       | 例             | 説明                             |
-| ------------ | -------- | -------------- | -------------------------------- |
-| `id`         | number   | `1`            | 主キー。1〜87 の連番             |
-| `name`       | string   | `"山本 陽菜"`  | 「姓 名」（日本語のダミー氏名）  |
-| `department` | string   | `"人事"`       | 部署（営業 / エンジニアリング / 人事 / マーケティング / 経理） |
-| `role`       | string   | `"リーダー"`   | 役職（メンバー / リーダー / マネージャー / ディレクター） |
-| `status`     | string   | `"onLeave"`    | 在籍状態（下記 enum）            |
-| `joinedAt`   | string   | `"2021-06-24"` | 入社日（`YYYY-MM-DD`、2015〜2025） |
-| `salary`     | number   | `8600000`      | 年収（350万〜940万、10万円刻み） |
+| 属性         | 型       | 例                               | 説明                             |
+| ------------ | -------- | -------------------------------- | -------------------------------- |
+| `groupId`    | string   | `"group_a"`                      | パーティションキー。テナント（会社）ID |
+| `email`      | string   | `"member001@group-a.example.com"`| ソートキー。従業員の識別子（一意）|
+| `name`       | string   | `"山本 陽菜"`                    | 「姓 名」（日本語のダミー氏名）  |
+| `department` | string   | `"人事"`                         | 部署（営業 / エンジニアリング / 人事 / マーケティング / 経理） |
+| `role`       | string   | `"リーダー"`                     | 役職（メンバー / リーダー / マネージャー / ディレクター） |
+| `status`     | string   | `"onLeave"`                      | 在籍状態（下記 enum）            |
+| `joinedAt`   | string   | `"2021-06-24"`                   | 入社日（`YYYY-MM-DD`、2015〜2025） |
+| `salary`     | number   | `8600000`                        | 年収（350万〜940万、10万円刻み） |
 
 `status` の enum とフロントエンドでの表示ラベルの対応:
 
@@ -67,3 +74,5 @@ pnpm db:down    # floci 停止
 このデータは固定シードの擬似乱数で一度生成し、`data/employees.json` として
 コミットしています（実行のたびに内容が変わらない再現可能なデータセット）。属性の型は
 フロントエンドの `Employee` 型（`frontend/src/data-table/employee.ts`）と一致します。
+デモ UI は `group_a` に所属する人が自社の一覧を見ている体で固定表示します
+（[frontend/src/data-table/api.ts](../frontend/src/data-table/api.ts) の `DEMO_GROUP_ID`）。

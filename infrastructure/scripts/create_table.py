@@ -14,8 +14,14 @@ def main() -> None:
 
     ddb.create_table(
         TableName=TABLE_NAME,
-        AttributeDefinitions=[{"AttributeName": "id", "AttributeType": "N"}],
-        KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
+        AttributeDefinitions=[
+            {"AttributeName": "groupId", "AttributeType": "S"},
+            {"AttributeName": "email", "AttributeType": "S"},
+        ],
+        KeySchema=[
+            {"AttributeName": "groupId", "KeyType": "HASH"},
+            {"AttributeName": "email", "KeyType": "RANGE"},
+        ],
         BillingMode="PAY_PER_REQUEST",
     )
     ddb.get_waiter("table_exists").wait(TableName=TABLE_NAME)

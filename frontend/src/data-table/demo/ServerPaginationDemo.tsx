@@ -69,7 +69,7 @@ export function ServerPaginationDemo() {
         <TextField
           size="small"
           fullWidth
-          placeholder="氏名・部署・役職で検索…（サーバー側 FilterExpression）"
+          placeholder="氏名・部署・役職で検索…（自社データのみをサーバー側 Query + FilterExpression）"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
@@ -106,7 +106,7 @@ export function ServerPaginationDemo() {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>メールアドレス</TableCell>
               <TableCell>氏名</TableCell>
               <TableCell>部署</TableCell>
               <TableCell>役職</TableCell>
@@ -130,8 +130,8 @@ export function ServerPaginationDemo() {
               </TableRow>
             ) : (
               data.items.map((emp) => (
-                <TableRow key={emp.id} hover>
-                  <TableCell>{emp.id}</TableCell>
+                <TableRow key={emp.email} hover>
+                  <TableCell>{emp.email}</TableCell>
                   <TableCell>{emp.name}</TableCell>
                   <TableCell>{emp.department}</TableCell>
                   <TableCell>{emp.role}</TableCell>
@@ -154,7 +154,7 @@ export function ServerPaginationDemo() {
       >
         <Typography variant="body2" color="text.secondary">
           {data
-            ? `${pageIndex + 1}ページ目 — 返却${data.count}件 (DynamoDBスキャン${data.scannedCount}件)${
+            ? `${pageIndex + 1}ページ目 — 返却${data.count}件 (DynamoDB評価${data.scannedCount}件)${
                 isFetching ? " · 更新中…" : ""
               }`
             : ""}

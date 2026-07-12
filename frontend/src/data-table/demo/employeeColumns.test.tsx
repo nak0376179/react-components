@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { StatusChip, formatSalary, employeeColumns } from "./employeeColumns"
-import { DataTable } from "./DataTable"
+import { DataTable } from "../components/DataTable"
 import type { Employee } from "../employee"
 
 describe("formatSalary", () => {
@@ -19,7 +19,8 @@ describe("StatusChip", () => {
 
 const sample: Employee[] = [
   {
-    id: 1,
+    groupId: "group_a",
+    email: "member001@group-a.example.com",
     name: "山本 陽菜",
     department: "人事",
     role: "リーダー",

@@ -1,6 +1,7 @@
 [
   {
-    "id": 1,
+    "groupId": "group_a",
+    "email": "member001@group-a.example.com",
     "name": "山本 陽菜",
     "department": "人事",
     "role": "リーダー",
@@ -9,7 +10,8 @@
     "salary": 8600000
   },
   {
-    "id": 2,
+    "groupId": "group_b",
+    "email": "member001@group-b.example.com",
     "name": "中村 結衣",
     "department": "営業",
     "role": "マネージャー",
@@ -18,7 +20,8 @@
     "salary": 7100000
   },
   {
-    "id": 3,
+    "groupId": "group_c",
+    "email": "member001@group-c.example.com",
     "name": "佐藤 陽向",
     "department": "営業",
     "role": "リーダー",
@@ -27,7 +30,8 @@
     "salary": 4600000
   },
   {
-    "id": 4,
+    "groupId": "group_a",
+    "email": "member002@group-a.example.com",
     "name": "鈴木 颯太",
     "department": "人事",
     "role": "ディレクター",
@@ -36,7 +40,8 @@
     "salary": 6100000
   },
   {
-    "id": 5,
+    "groupId": "group_b",
+    "email": "member002@group-b.example.com",
     "name": "渡辺 蓮",
     "department": "マーケティング",
     "role": "メンバー",
@@ -45,7 +50,8 @@
     "salary": 7900000
   },
   {
-    "id": 6,
+    "groupId": "group_c",
+    "email": "member002@group-c.example.com",
     "name": "高橋 蓮",
     "department": "営業",
     "role": "マネージャー",
@@ -54,7 +60,8 @@
     "salary": 7600000
   },
   {
-    "id": 7,
+    "groupId": "group_a",
+    "email": "member003@group-a.example.com",
     "name": "伊藤 美咲",
     "department": "営業",
     "role": "メンバー",
@@ -63,7 +70,8 @@
     "salary": 5600000
   },
   {
-    "id": 8,
+    "groupId": "group_b",
+    "email": "member003@group-b.example.com",
     "name": "佐藤 さくら",
     "department": "経理",
     "role": "リーダー",
@@ -72,7 +80,8 @@
     "salary": 4500000
   },
   {
-    "id": 9,
+    "groupId": "group_c",
+    "email": "member003@group-c.example.com",
     "name": "加藤 陽向",
     "department": "経理",
     "role": "リーダー",
@@ -81,7 +90,8 @@
     "salary": 5500000
   },
   {
-    "id": 10,
+    "groupId": "group_a",
+    "email": "member004@group-a.example.com",
     "name": "高橋 大翔",
     "department": "経理",
     "role": "マネージャー",
@@ -90,7 +100,8 @@
     "salary": 8800000
   },
   {
-    "id": 11,
+    "groupId": "group_b",
+    "email": "member004@group-b.example.com",
     "name": "鈴木 悠真",
     "department": "エンジニアリング",
     "role": "ディレクター",
@@ -99,7 +110,8 @@
     "salary": 4000000
   },
   {
-    "id": 12,
+    "groupId": "group_c",
+    "email": "member004@group-c.example.com",
     "name": "加藤 陽菜",
     "department": "マーケティング",
     "role": "マネージャー",
@@ -108,7 +120,8 @@
     "salary": 5900000
   },
   {
-    "id": 13,
+    "groupId": "group_a",
+    "email": "member005@group-a.example.com",
     "name": "高橋 悠真",
     "department": "経理",
     "role": "リーダー",
@@ -117,7 +130,8 @@
     "salary": 5800000
   },
   {
-    "id": 14,
+    "groupId": "group_b",
+    "email": "member005@group-b.example.com",
     "name": "佐藤 さくら",
     "department": "マーケティング",
     "role": "ディレクター",
@@ -126,7 +140,8 @@
     "salary": 4700000
   },
   {
-    "id": 15,
+    "groupId": "group_c",
+    "email": "member005@group-c.example.com",
     "name": "佐藤 さくら",
     "department": "マーケティング",
     "role": "リーダー",
@@ -135,7 +150,8 @@
     "salary": 5500000
   },
   {
-    "id": 16,
+    "groupId": "group_a",
+    "email": "member006@group-a.example.com",
     "name": "渡辺 美咲",
     "department": "営業",
     "role": "メンバー",
@@ -144,7 +160,8 @@
     "salary": 5200000
   },
   {
-    "id": 17,
+    "groupId": "group_b",
+    "email": "member006@group-b.example.com",
     "name": "山本 結衣",
     "department": "エンジニアリング",
     "role": "ディレクター",
@@ -153,7 +170,8 @@
     "salary": 6400000
   },
   {
-    "id": 18,
+    "groupId": "group_c",
+    "email": "member006@group-c.example.com",
     "name": "高橋 結衣",
     "department": "エンジニアリング",
     "role": "リーダー",
@@ -162,7 +180,8 @@
     "salary": 4800000
   },
   {
-    "id": 19,
+    "groupId": "group_a",
+    "email": "member007@group-a.example.com",
     "name": "鈴木 結衣",
     "department": "営業",
     "role": "マネージャー",
@@ -171,7 +190,8 @@
     "salary": 6300000
   },
   {
-    "id": 20,
+    "groupId": "group_b",
+    "email": "member007@group-b.example.com",
     "name": "小林 大翔",
     "department": "営業",
     "role": "ディレクター",
@@ -180,7 +200,8 @@
     "salary": 8500000
   },
   {
-    "id": 21,
+    "groupId": "group_c",
+    "email": "member007@group-c.example.com",
     "name": "山本 颯太",
     "department": "エンジニアリング",
     "role": "リーダー",
@@ -189,7 +210,8 @@
     "salary": 9400000
   },
   {
-    "id": 22,
+    "groupId": "group_a",
+    "email": "member008@group-a.example.com",
     "name": "中村 翼",
     "department": "営業",
     "role": "メンバー",
@@ -198,7 +220,8 @@
     "salary": 7500000
   },
   {
-    "id": 23,
+    "groupId": "group_b",
+    "email": "member008@group-b.example.com",
     "name": "山本 颯太",
     "department": "経理",
     "role": "マネージャー",
@@ -207,7 +230,8 @@
     "salary": 6100000
   },
   {
-    "id": 24,
+    "groupId": "group_c",
+    "email": "member008@group-c.example.com",
     "name": "加藤 悠真",
     "department": "エンジニアリング",
     "role": "ディレクター",
@@ -216,7 +240,8 @@
     "salary": 5600000
   },
   {
-    "id": 25,
+    "groupId": "group_a",
+    "email": "member009@group-a.example.com",
     "name": "中村 美咲",
     "department": "経理",
     "role": "リーダー",
@@ -225,7 +250,8 @@
     "salary": 4300000
   },
   {
-    "id": 26,
+    "groupId": "group_b",
+    "email": "member009@group-b.example.com",
     "name": "高橋 大翔",
     "department": "人事",
     "role": "マネージャー",
@@ -234,7 +260,8 @@
     "salary": 8200000
   },
   {
-    "id": 27,
+    "groupId": "group_c",
+    "email": "member009@group-c.example.com",
     "name": "伊藤 大翔",
     "department": "人事",
     "role": "リーダー",
@@ -243,7 +270,8 @@
     "salary": 5300000
   },
   {
-    "id": 28,
+    "groupId": "group_a",
+    "email": "member010@group-a.example.com",
     "name": "渡辺 陽向",
     "department": "マーケティング",
     "role": "リーダー",
@@ -252,7 +280,8 @@
     "salary": 3500000
   },
   {
-    "id": 29,
+    "groupId": "group_b",
+    "email": "member010@group-b.example.com",
     "name": "小林 大翔",
     "department": "人事",
     "role": "メンバー",
@@ -261,7 +290,8 @@
     "salary": 3800000
   },
   {
-    "id": 30,
+    "groupId": "group_c",
+    "email": "member010@group-c.example.com",
     "name": "渡辺 翼",
     "department": "経理",
     "role": "ディレクター",
@@ -270,7 +300,8 @@
     "salary": 8200000
   },
   {
-    "id": 31,
+    "groupId": "group_a",
+    "email": "member011@group-a.example.com",
     "name": "鈴木 翼",
     "department": "営業",
     "role": "メンバー",
@@ -279,7 +310,8 @@
     "salary": 7500000
   },
   {
-    "id": 32,
+    "groupId": "group_b",
+    "email": "member011@group-b.example.com",
     "name": "佐藤 結衣",
     "department": "エンジニアリング",
     "role": "リーダー",
@@ -288,7 +320,8 @@
     "salary": 6700000
   },
   {
-    "id": 33,
+    "groupId": "group_c",
+    "email": "member011@group-c.example.com",
     "name": "高橋 陽向",
     "department": "経理",
     "role": "ディレクター",
@@ -297,7 +330,8 @@
     "salary": 6900000
   },
   {
-    "id": 34,
+    "groupId": "group_a",
+    "email": "member012@group-a.example.com",
     "name": "中村 陽向",
     "department": "マーケティング",
     "role": "マネージャー",
@@ -306,7 +340,8 @@
     "salary": 9300000
   },
   {
-    "id": 35,
+    "groupId": "group_b",
+    "email": "member012@group-b.example.com",
     "name": "山本 悠真",
     "department": "経理",
     "role": "リーダー",
@@ -315,7 +350,8 @@
     "salary": 5400000
   },
   {
-    "id": 36,
+    "groupId": "group_c",
+    "email": "member012@group-c.example.com",
     "name": "渡辺 颯太",
     "department": "マーケティング",
     "role": "ディレクター",
@@ -324,7 +360,8 @@
     "salary": 4400000
   },
   {
-    "id": 37,
+    "groupId": "group_a",
+    "email": "member013@group-a.example.com",
     "name": "高橋 悠真",
     "department": "マーケティング",
     "role": "マネージャー",
@@ -333,7 +370,8 @@
     "salary": 4600000
   },
   {
-    "id": 38,
+    "groupId": "group_b",
+    "email": "member013@group-b.example.com",
     "name": "伊藤 翼",
     "department": "人事",
     "role": "ディレクター",
@@ -342,7 +380,8 @@
     "salary": 6000000
   },
   {
-    "id": 39,
+    "groupId": "group_c",
+    "email": "member013@group-c.example.com",
     "name": "渡辺 翼",
     "department": "営業",
     "role": "メンバー",
@@ -351,7 +390,8 @@
     "salary": 5700000
   },
   {
-    "id": 40,
+    "groupId": "group_a",
+    "email": "member014@group-a.example.com",
     "name": "佐藤 翼",
     "department": "エンジニアリング",
     "role": "マネージャー",
@@ -360,7 +400,8 @@
     "salary": 8600000
   },
   {
-    "id": 41,
+    "groupId": "group_b",
+    "email": "member014@group-b.example.com",
     "name": "田中 翼",
     "department": "マーケティング",
     "role": "メンバー",
@@ -369,7 +410,8 @@
     "salary": 5100000
   },
   {
-    "id": 42,
+    "groupId": "group_c",
+    "email": "member014@group-c.example.com",
     "name": "伊藤 陽向",
     "department": "営業",
     "role": "ディレクター",
@@ -378,7 +420,8 @@
     "salary": 9000000
   },
   {
-    "id": 43,
+    "groupId": "group_a",
+    "email": "member015@group-a.example.com",
     "name": "田中 蓮",
     "department": "エンジニアリング",
     "role": "ディレクター",
@@ -387,7 +430,8 @@
     "salary": 8500000
   },
   {
-    "id": 44,
+    "groupId": "group_b",
+    "email": "member015@group-b.example.com",
     "name": "中村 さくら",
     "department": "エンジニアリング",
     "role": "メンバー",
@@ -396,7 +440,8 @@
     "salary": 6500000
   },
   {
-    "id": 45,
+    "groupId": "group_c",
+    "email": "member015@group-c.example.com",
     "name": "伊藤 颯太",
     "department": "マーケティング",
     "role": "リーダー",
@@ -405,7 +450,8 @@
     "salary": 4500000
   },
   {
-    "id": 46,
+    "groupId": "group_a",
+    "email": "member016@group-a.example.com",
     "name": "高橋 さくら",
     "department": "エンジニアリング",
     "role": "メンバー",
@@ -414,7 +460,8 @@
     "salary": 7100000
   },
   {
-    "id": 47,
+    "groupId": "group_b",
+    "email": "member016@group-b.example.com",
     "name": "渡辺 さくら",
     "department": "営業",
     "role": "ディレクター",
@@ -423,7 +470,8 @@
     "salary": 5200000
   },
   {
-    "id": 48,
+    "groupId": "group_c",
+    "email": "member016@group-c.example.com",
     "name": "中村 蓮",
     "department": "経理",
     "role": "リーダー",
@@ -432,7 +480,8 @@
     "salary": 7300000
   },
   {
-    "id": 49,
+    "groupId": "group_a",
+    "email": "member017@group-a.example.com",
     "name": "佐藤 陽菜",
     "department": "経理",
     "role": "メンバー",
@@ -441,7 +490,8 @@
     "salary": 6500000
   },
   {
-    "id": 50,
+    "groupId": "group_b",
+    "email": "member017@group-b.example.com",
     "name": "鈴木 美咲",
     "department": "経理",
     "role": "リーダー",
@@ -450,7 +500,8 @@
     "salary": 6600000
   },
   {
-    "id": 51,
+    "groupId": "group_c",
+    "email": "member017@group-c.example.com",
     "name": "高橋 大翔",
     "department": "営業",
     "role": "ディレクター",
@@ -459,7 +510,8 @@
     "salary": 6000000
   },
   {
-    "id": 52,
+    "groupId": "group_a",
+    "email": "member018@group-a.example.com",
     "name": "山本 翼",
     "department": "経理",
     "role": "ディレクター",
@@ -468,7 +520,8 @@
     "salary": 8300000
   },
   {
-    "id": 53,
+    "groupId": "group_b",
+    "email": "member018@group-b.example.com",
     "name": "伊藤 陽向",
     "department": "人事",
     "role": "リーダー",
@@ -477,7 +530,8 @@
     "salary": 3500000
   },
   {
-    "id": 54,
+    "groupId": "group_c",
+    "email": "member018@group-c.example.com",
     "name": "鈴木 結衣",
     "department": "マーケティング",
     "role": "ディレクター",
@@ -486,7 +540,8 @@
     "salary": 7200000
   },
   {
-    "id": 55,
+    "groupId": "group_a",
+    "email": "member019@group-a.example.com",
     "name": "渡辺 大翔",
     "department": "人事",
     "role": "リーダー",
@@ -495,7 +550,8 @@
     "salary": 4200000
   },
   {
-    "id": 56,
+    "groupId": "group_b",
+    "email": "member019@group-b.example.com",
     "name": "小林 大翔",
     "department": "営業",
     "role": "ディレクター",
@@ -504,7 +560,8 @@
     "salary": 6500000
   },
   {
-    "id": 57,
+    "groupId": "group_c",
+    "email": "member019@group-c.example.com",
     "name": "山本 颯太",
     "department": "マーケティング",
     "role": "ディレクター",
@@ -513,7 +570,8 @@
     "salary": 9300000
   },
   {
-    "id": 58,
+    "groupId": "group_a",
+    "email": "member020@group-a.example.com",
     "name": "鈴木 翼",
     "department": "経理",
     "role": "メンバー",
@@ -522,7 +580,8 @@
     "salary": 8700000
   },
   {
-    "id": 59,
+    "groupId": "group_b",
+    "email": "member020@group-b.example.com",
     "name": "小林 大翔",
     "department": "経理",
     "role": "マネージャー",
@@ -531,7 +590,8 @@
     "salary": 4400000
   },
   {
-    "id": 60,
+    "groupId": "group_c",
+    "email": "member020@group-c.example.com",
     "name": "鈴木 蓮",
     "department": "マーケティング",
     "role": "リーダー",
@@ -540,7 +600,8 @@
     "salary": 9300000
   },
   {
-    "id": 61,
+    "groupId": "group_a",
+    "email": "member021@group-a.example.com",
     "name": "佐藤 悠真",
     "department": "経理",
     "role": "リーダー",
@@ -549,7 +610,8 @@
     "salary": 8800000
   },
   {
-    "id": 62,
+    "groupId": "group_b",
+    "email": "member021@group-b.example.com",
     "name": "山本 結衣",
     "department": "人事",
     "role": "マネージャー",
@@ -558,7 +620,8 @@
     "salary": 4500000
   },
   {
-    "id": 63,
+    "groupId": "group_c",
+    "email": "member021@group-c.example.com",
     "name": "中村 大翔",
     "department": "人事",
     "role": "ディレクター",
@@ -567,7 +630,8 @@
     "salary": 7000000
   },
   {
-    "id": 64,
+    "groupId": "group_a",
+    "email": "member022@group-a.example.com",
     "name": "山本 さくら",
     "department": "人事",
     "role": "マネージャー",
@@ -576,7 +640,8 @@
     "salary": 8800000
   },
   {
-    "id": 65,
+    "groupId": "group_b",
+    "email": "member022@group-b.example.com",
     "name": "佐藤 美咲",
     "department": "営業",
     "role": "メンバー",
@@ -585,7 +650,8 @@
     "salary": 3800000
   },
   {
-    "id": 66,
+    "groupId": "group_c",
+    "email": "member022@group-c.example.com",
     "name": "伊藤 颯太",
     "department": "エンジニアリング",
     "role": "メンバー",
@@ -594,7 +660,8 @@
     "salary": 7400000
   },
   {
-    "id": 67,
+    "groupId": "group_a",
+    "email": "member023@group-a.example.com",
     "name": "小林 陽向",
     "department": "人事",
     "role": "マネージャー",
@@ -603,7 +670,8 @@
     "salary": 7000000
   },
   {
-    "id": 68,
+    "groupId": "group_b",
+    "email": "member023@group-b.example.com",
     "name": "中村 蓮",
     "department": "経理",
     "role": "ディレクター",
@@ -612,7 +680,8 @@
     "salary": 7000000
   },
   {
-    "id": 69,
+    "groupId": "group_c",
+    "email": "member023@group-c.example.com",
     "name": "小林 悠真",
     "department": "エンジニアリング",
     "role": "ディレクター",
@@ -621,7 +690,8 @@
     "salary": 9000000
   },
   {
-    "id": 70,
+    "groupId": "group_a",
+    "email": "member024@group-a.example.com",
     "name": "加藤 陽向",
     "department": "経理",
     "role": "メンバー",
@@ -630,7 +700,8 @@
     "salary": 7100000
   },
   {
-    "id": 71,
+    "groupId": "group_b",
+    "email": "member024@group-b.example.com",
     "name": "高橋 美咲",
     "department": "エンジニアリング",
     "role": "マネージャー",
@@ -639,7 +710,8 @@
     "salary": 4800000
   },
   {
-    "id": 72,
+    "groupId": "group_c",
+    "email": "member024@group-c.example.com",
     "name": "田中 陽向",
     "department": "エンジニアリング",
     "role": "リーダー",
@@ -648,7 +720,8 @@
     "salary": 6900000
   },
   {
-    "id": 73,
+    "groupId": "group_a",
+    "email": "member025@group-a.example.com",
     "name": "小林 陽向",
     "department": "経理",
     "role": "リーダー",
@@ -657,7 +730,8 @@
     "salary": 6200000
   },
   {
-    "id": 74,
+    "groupId": "group_b",
+    "email": "member025@group-b.example.com",
     "name": "伊藤 陽菜",
     "department": "営業",
     "role": "マネージャー",
@@ -666,7 +740,8 @@
     "salary": 5400000
   },
   {
-    "id": 75,
+    "groupId": "group_c",
+    "email": "member025@group-c.example.com",
     "name": "高橋 翼",
     "department": "人事",
     "role": "マネージャー",
@@ -675,7 +750,8 @@
     "salary": 7700000
   },
   {
-    "id": 76,
+    "groupId": "group_a",
+    "email": "member026@group-a.example.com",
     "name": "田中 結衣",
     "department": "マーケティング",
     "role": "リーダー",
@@ -684,7 +760,8 @@
     "salary": 4000000
   },
   {
-    "id": 77,
+    "groupId": "group_b",
+    "email": "member026@group-b.example.com",
     "name": "小林 美咲",
     "department": "人事",
     "role": "メンバー",
@@ -693,7 +770,8 @@
     "salary": 7100000
   },
   {
-    "id": 78,
+    "groupId": "group_c",
+    "email": "member026@group-c.example.com",
     "name": "田中 陽菜",
     "department": "経理",
     "role": "マネージャー",
@@ -702,7 +780,8 @@
     "salary": 3700000
   },
   {
-    "id": 79,
+    "groupId": "group_a",
+    "email": "member027@group-a.example.com",
     "name": "渡辺 陽向",
     "department": "経理",
     "role": "マネージャー",
@@ -711,7 +790,8 @@
     "salary": 6600000
   },
   {
-    "id": 80,
+    "groupId": "group_b",
+    "email": "member027@group-b.example.com",
     "name": "高橋 美咲",
     "department": "エンジニアリング",
     "role": "マネージャー",
@@ -720,7 +800,8 @@
     "salary": 6100000
   },
   {
-    "id": 81,
+    "groupId": "group_c",
+    "email": "member027@group-c.example.com",
     "name": "山本 颯太",
     "department": "経理",
     "role": "メンバー",
@@ -729,7 +810,8 @@
     "salary": 6400000
   },
   {
-    "id": 82,
+    "groupId": "group_a",
+    "email": "member028@group-a.example.com",
     "name": "伊藤 美咲",
     "department": "エンジニアリング",
     "role": "リーダー",
@@ -738,7 +820,8 @@
     "salary": 4400000
   },
   {
-    "id": 83,
+    "groupId": "group_b",
+    "email": "member028@group-b.example.com",
     "name": "中村 陽向",
     "department": "人事",
     "role": "リーダー",
@@ -747,7 +830,8 @@
     "salary": 7800000
   },
   {
-    "id": 84,
+    "groupId": "group_c",
+    "email": "member028@group-c.example.com",
     "name": "高橋 陽向",
     "department": "エンジニアリング",
     "role": "メンバー",
@@ -756,7 +840,8 @@
     "salary": 5700000
   },
   {
-    "id": 85,
+    "groupId": "group_a",
+    "email": "member029@group-a.example.com",
     "name": "中村 陽向",
     "department": "営業",
     "role": "マネージャー",
@@ -765,7 +850,8 @@
     "salary": 4600000
   },
   {
-    "id": 86,
+    "groupId": "group_b",
+    "email": "member029@group-b.example.com",
     "name": "伊藤 大翔",
     "department": "営業",
     "role": "リーダー",
@@ -774,7 +860,8 @@
     "salary": 5700000
   },
   {
-    "id": 87,
+    "groupId": "group_c",
+    "email": "member029@group-c.example.com",
     "name": "加藤 さくら",
     "department": "エンジニアリング",
     "role": "メンバー",

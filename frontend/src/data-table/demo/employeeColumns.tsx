@@ -23,7 +23,7 @@ const columnHelper = createColumnHelper<Employee>()
 
 /** クライアント側 DataTable 用のカラム定義。 */
 export const employeeColumns = [
-  columnHelper.accessor("id", { header: "ID", size: 60 }),
+  columnHelper.accessor("email", { header: "メールアドレス" }),
   columnHelper.accessor("name", { header: "氏名" }),
   columnHelper.accessor("department", { header: "部署" }),
   columnHelper.accessor("role", { header: "役職" }),
