@@ -9,6 +9,7 @@ React コンポーネントのショーケース。2系統ある。
 
 - **演出系**（`frontend/src/effects/`）— 任意のページを囲むイースターエッグ／ジョークコンポーネント（JigsawPuzzle / ShatterGlass / CheatCode / Pixelate）。バックエンド不要。
 - **データテーブル系**（`frontend/src/data-table/`）— 汎用 `DataTable`（TanStack Table + MUI）と、FastAPI + DynamoDB互換の floci を使ったクライアント／サーバーページネーションのデモ。
+- **CSV/TSV変換系**（`frontend/src/csv-json/`）— 貼り付けた CSV/TSV を列定義に従って検証し JSON/CSV に変換する `CsvJsonTextArea`。変換ロジック（`core/convert.ts`）は papaparse ベースで React 非依存（Vue 等でも利用可）。バックエンド不要。
 
 ## モノレポ構成
 

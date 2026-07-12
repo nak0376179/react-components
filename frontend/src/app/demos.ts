@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { effectsDemos } from "../effects/demos"
 import { dataTableDemos } from "../data-table/demos"
+import { csvJsonDemos } from "../csv-json/demos"
 
 export type Demo = {
   /** URL パスにもなるデモの識別子（例: "jigsaw"）。 */
@@ -12,4 +13,4 @@ export type Demo = {
 }
 
 /** 全 feature のデモを集約したレジストリ。新しい feature を足したらここに1行追加する。 */
-export const demos: Demo[] = [...effectsDemos, ...dataTableDemos]
+export const demos: Demo[] = [...effectsDemos, ...dataTableDemos, ...csvJsonDemos]
