@@ -1,0 +1,9 @@
+[project]
+name = "infrastructure"
+version = "0.1.0"
+description = "floci (DynamoDB互換ローカルDB) のテーブル作成とデータ投入"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.43.46",
+]

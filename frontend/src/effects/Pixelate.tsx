@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react"
 
 /* ------------------------------------------------------------------ *
  * Pixelate
@@ -22,17 +15,17 @@ import {
  * ------------------------------------------------------------------ */
 
 export interface PixelateProps {
-  children: ReactNode;
+  children: ReactNode
   /** モザイクのブロックサイズ（px）。大きいほど粗くなる。@default 14 */
-  size?: number;
+  size?: number
   /** 効果をオフにする（子要素は通常どおりレンダリングされる）。@default true */
-  active?: boolean;
+  active?: boolean
   /** ポインター下に鮮明な円を露わにする。@default true */
-  lens?: boolean;
+  lens?: boolean
   /** 露出レンズの半径（px）。@default 90 */
-  lensRadius?: number;
+  lensRadius?: number
   /** フローティングの操作バー（ブロックサイズのスライダー / 露出トグル）を表示する。@default true */
-  controls?: boolean;
+  controls?: boolean
 }
 
 export function Pixelate({
@@ -43,32 +36,32 @@ export function Pixelate({
   lensRadius = 90,
   controls = true,
 }: PixelateProps) {
-  const uid = useId().replace(/:/g, "");
-  const filterId = `${uid}-pixelate`;
-  const hostRef = useRef<HTMLDivElement>(null);
+  const uid = useId().replace(/:/g, "")
+  const filterId = `${uid}-pixelate`
+  const hostRef = useRef<HTMLDivElement>(null)
 
-  const [px, setPx] = useState(size);
-  const [revealed, setRevealed] = useState(false);
+  const [px, setPx] = useState(size)
+  const [revealed, setRevealed] = useState(false)
   // ホストローカル座標（px）でのレンズ中心。ポインターが離れているときは null。
-  const [lensPos, setLensPos] = useState<{ x: number; y: number } | null>(null);
+  const [lensPos, setLensPos] = useState<{ x: number; y: number } | null>(null)
 
-  useEffect(() => setPx(size), [size]);
+  useEffect(() => setPx(size), [size])
 
   const onMove = useCallback(
     (e: React.PointerEvent) => {
-      if (!lens || revealed) return;
-      const el = hostRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      setLensPos({ x: e.clientX - r.left, y: e.clientY - r.top });
+      if (!lens || revealed) return
+      const el = hostRef.current
+      if (!el) return
+      const r = el.getBoundingClientRect()
+      setLensPos({ x: e.clientX - r.left, y: e.clientY - r.top })
     },
     [lens, revealed],
-  );
+  )
 
-  if (!active) return <>{children}</>;
+  if (!active) return <>{children}</>
 
-  const showLens = lens && !revealed && lensPos !== null;
-  const half = px / 2;
+  const showLens = lens && !revealed && lensPos !== null
+  const half = px / 2
 
   return (
     <div
@@ -183,7 +176,7 @@ export function Pixelate({
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default Pixelate;
+export default Pixelate

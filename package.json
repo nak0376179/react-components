@@ -3,23 +3,26 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@11.11.0",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "dev": "pnpm --filter frontend dev",
+    "build": "pnpm --filter frontend build",
+    "preview": "pnpm --filter frontend preview",
+    "db:up": "docker compose -f infrastructure/docker-compose.yml up -d",
+    "db:down": "docker compose -f infrastructure/docker-compose.yml down",
+    "db:init": "cd infrastructure && uv run python scripts/create_table.py",
+    "db:seed": "cd infrastructure && uv run python scripts/load_data.py",
+    "api:dev": "cd backend && uv run uvicorn main:app --reload --port 8000",
+    "dev:all": "bash scripts/dev-all.sh",
+    "test": "pnpm --filter frontend test",
+    "lint": "pnpm --filter frontend lint",
+    "format": "pnpm --filter frontend format",
+    "lint:py": "uv run ruff check backend infrastructure",
+    "format:py": "uv run ruff format backend infrastructure && uv run ruff check --fix backend infrastructure",
+    "typecheck:py": "uv run mypy backend infrastructure",
+    "check": "pnpm lint && pnpm lint:py && pnpm typecheck:py && pnpm build && pnpm test"
   },
   "devDependencies": {
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.2"
-  },
-  "allowScripts": {
-    "esbuild@0.21.5": true
+    "concurrently": "^10.0.3"
   }
 }

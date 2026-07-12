@@ -1,0 +1,33 @@
+[tool.uv.workspace]
+members = ["backend", "infrastructure"]
+
+# Python の lint/format/typecheck ツールはワークスペース共通で、ここに集約する。
+# 実体は共有 .venv に入る（`uv sync` で導入）。対象は backend / infrastructure。
+# ruff が lint(pylint相当のPLルール込み) + format(black互換) を兼ねるため、
+# black/pylint は別途入れない。型チェックのみ mypy。
+[dependency-groups]
+dev = [
+    "ruff>=0.14.0",
+    "mypy>=1.14.0",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+# E: pycodestyle, F: pyflakes, I: import整列, PL: pylint相当, B/SIM/C4/UP: バグ検出・簡潔化
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "PL"]
+# E501（行長）は好みの範疇で、日本語 docstring 等で誤検知しやすい。行長は ruff format(120) に一任する。
+# PLR0913/PLR2004 は本デモの規模では厳しすぎるノイズなので無効化。
+ignore = ["E501", "PLR0913", "PLR2004"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true       # boto3 等は型スタブを入れていないため
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+# infrastructure/scripts の `import _floci`（同一ディレクトリのローカルモジュール）を解決させる。
+mypy_path = "infrastructure/scripts"
+explicit_package_bases = true

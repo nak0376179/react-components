@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 
 /* ------------------------------------------------------------------ *
  * CheatCode
@@ -32,35 +25,35 @@ export const CHEAT_SEQUENCE = [
   "ArrowRight",
   "b",
   "a",
-] as const;
+] as const
 
 export interface CheatCodeProps {
-  children: ReactNode;
+  children: ReactNode
   /** 解除されたときに表示する内容。デフォルトはお祝いのバナー。 */
-  secret?: ReactNode;
+  secret?: ReactNode
   /** キー入力シーケンスを上書きする（KeyboardEvent.key の値、大文字小文字は無視）。 */
-  code?: readonly string[];
+  code?: readonly string[]
   /** 解除時に紙吹雪を降らせる。@default true */
-  confetti?: boolean;
+  confetti?: boolean
   /** 解除時にページ全体へ短い虹色のきらめきをかける。@default true */
-  shimmer?: boolean;
+  shimmer?: boolean
   /** 解除時に合成したパワーアップ音を鳴らす。@default true */
-  sound?: boolean;
+  sound?: boolean
   /** 2 回目の入力で解除を切り替えず、解除したままにする。@default false */
-  sticky?: boolean;
+  sticky?: boolean
   /** コードが完成するたびに発火する。 */
-  onUnlock?: () => void;
+  onUnlock?: () => void
 }
 
 type Confetto = {
-  id: number;
-  left: number; // vw
-  delay: number; // 秒
-  dur: number; // 秒
-  color: string;
-  size: number; // px
-  rot: number; // 度
-};
+  id: number
+  left: number // vw
+  delay: number // 秒
+  dur: number // 秒
+  color: string
+  size: number // px
+  rot: number // 度
+}
 
 const CONFETTI_COLORS = [
   "#e8543f",
@@ -70,7 +63,7 @@ const CONFETTI_COLORS = [
   "#6a5cff",
   "#00c2ff",
   "#ee9b00",
-];
+]
 
 export function CheatCode({
   children,
@@ -82,49 +75,48 @@ export function CheatCode({
   sticky = false,
   onUnlock,
 }: CheatCodeProps) {
-  const [unlocked, setUnlocked] = useState(false);
-  const [burst, setBurst] = useState<Confetto[]>([]);
-  const progress = useRef(0);
-  const burstId = useRef(0);
+  const [unlocked, setUnlocked] = useState(false)
+  const [burst, setBurst] = useState<Confetto[]>([])
+  const progress = useRef(0)
+  const burstId = useRef(0)
 
-  const wanted = useMemo(() => code.map((k) => k.toLowerCase()), [code]);
+  const wanted = useMemo(() => code.map((k) => k.toLowerCase()), [code])
 
   // 解除音用に遅延生成する AudioContext（音源ファイル不要の合成音）。
-  const audioRef = useRef<AudioContext | null>(null);
+  const audioRef = useRef<AudioContext | null>(null)
   const playJingle = useCallback(() => {
-    if (!sound) return;
-    let ctx = audioRef.current;
+    if (!sound) return
+    let ctx = audioRef.current
     if (!ctx) {
       const AC =
         window.AudioContext ||
-        (window as unknown as { webkitAudioContext?: typeof AudioContext })
-          .webkitAudioContext;
-      if (!AC) return;
-      ctx = new AC();
-      audioRef.current = ctx;
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+      if (!AC) return
+      ctx = new AC()
+      audioRef.current = ctx
     }
-    if (ctx.state === "suspended") void ctx.resume();
+    if (ctx.state === "suspended") void ctx.resume()
     // 1UP 風に上昇するアルペジオ。
-    [659, 784, 988, 1319].forEach((freq, k) => {
-      const t = ctx!.currentTime + k * 0.08;
-      const osc = ctx!.createOscillator();
-      const g = ctx!.createGain();
-      osc.type = "square";
-      osc.frequency.setValueAtTime(freq, t);
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.08, t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
-      osc.connect(g).connect(ctx!.destination);
-      osc.start(t);
-      osc.stop(t + 0.18);
-    });
-  }, [sound]);
+    ;[659, 784, 988, 1319].forEach((freq, k) => {
+      const t = ctx!.currentTime + k * 0.08
+      const osc = ctx!.createOscillator()
+      const g = ctx!.createGain()
+      osc.type = "square"
+      osc.frequency.setValueAtTime(freq, t)
+      g.gain.setValueAtTime(0.0001, t)
+      g.gain.exponentialRampToValueAtTime(0.08, t + 0.02)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16)
+      osc.connect(g).connect(ctx!.destination)
+      osc.start(t)
+      osc.stop(t + 0.18)
+    })
+  }, [sound])
 
   const fire = useCallback(() => {
-    setUnlocked((u) => (sticky ? true : !u));
-    playJingle();
+    setUnlocked((u) => (sticky ? true : !u))
+    playJingle()
     if (confetti) {
-      const id = ++burstId.current;
+      const id = ++burstId.current
       const pieces: Confetto[] = Array.from({ length: 80 }, (_, i) => ({
         id: id * 1000 + i,
         left: Math.random() * 100,
@@ -133,39 +125,39 @@ export function CheatCode({
         color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
         size: 6 + Math.random() * 8,
         rot: Math.random() * 360,
-      }));
-      setBurst(pieces);
+      }))
+      setBurst(pieces)
       window.setTimeout(() => {
         // より新しい紙吹雪に置き換えられていない場合のみクリアする。
-        if (burstId.current === id) setBurst([]);
-      }, 4200);
+        if (burstId.current === id) setBurst([])
+      }, 4200)
     }
-    onUnlock?.();
-  }, [sticky, confetti, playJingle, onUnlock]);
+    onUnlock?.()
+  }, [sticky, confetti, playJingle, onUnlock])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setUnlocked(false);
-        progress.current = 0;
-        return;
+        setUnlocked(false)
+        progress.current = 0
+        return
       }
-      const want = wanted[progress.current];
+      const want = wanted[progress.current]
       if (e.key.toLowerCase() === want) {
-        progress.current += 1;
+        progress.current += 1
         if (progress.current === wanted.length) {
-          progress.current = 0;
-          fire();
+          progress.current = 0
+          fire()
         }
       } else {
         // リセットするが寛容に扱う。間違ったキーでも *先頭* のキーと一致すれば
         // 新たな開始としてカウントする（例: ↑ ↑ ↑ でも進行する）。
-        progress.current = e.key.toLowerCase() === wanted[0] ? 1 : 0;
+        progress.current = e.key.toLowerCase() === wanted[0] ? 1 : 0
       }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [wanted, fire]);
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [wanted, fire])
 
   return (
     <div style={{ position: "relative" }}>
@@ -233,7 +225,7 @@ export function CheatCode({
 
       <style>{KEYFRAMES}</style>
     </div>
-  );
+  )
 }
 
 function DefaultSecret({ onClose }: { onClose: () => void }) {
@@ -251,9 +243,7 @@ function DefaultSecret({ onClose }: { onClose: () => void }) {
       }}
     >
       <div style={{ fontSize: 44 }}>🎉</div>
-      <div style={{ fontSize: 24, fontWeight: 800, margin: "6px 0" }}>
-残機 30 機 解除！
-      </div>
+      <div style={{ fontSize: 24, fontWeight: 800, margin: "6px 0" }}>残機 30 機 解除！</div>
       <div style={{ opacity: 0.8, fontSize: 14 }}>
         隠しコマンド成功。<code>secret</code> prop で中身を差し替えられます。
       </div>
@@ -275,7 +265,7 @@ function DefaultSecret({ onClose }: { onClose: () => void }) {
         閉じる (Esc)
       </button>
     </div>
-  );
+  )
 }
 
 const KEYFRAMES = `
@@ -290,6 +280,6 @@ const KEYFRAMES = `
   0%, 100% { filter: none; }
   50% { filter: hue-rotate(320deg) saturate(1.6); }
 }
-`;
+`
 
-export default CheatCode;
+export default CheatCode
