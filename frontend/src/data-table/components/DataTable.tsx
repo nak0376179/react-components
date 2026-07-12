@@ -53,6 +53,8 @@ export function DataTable<T>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    // TanStack Table は数値列を降順から並べ始めるが、UI（TableSortLabel）は昇順スタート前提なので揃える。
+    sortDescFirst: false,
     initialState: { pagination: { pageSize: initialPageSize } },
   })
 
