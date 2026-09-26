@@ -1,5 +1,7 @@
 # react-components
 
+> **アーカイブ済み (2026-09-27)**: [headless-components](https://github.com/nak0376179/headless-components) に統合した。React / Vue 両対応のヘッドレスコアを MUI / Vuetify で包む構成で、バックエンドは持たない。今後はそちらで開発する。
+
 React コンポーネントのショーケース。大きく2系統で構成しています。
 
 - **🎭 演出系（`frontend/src/effects/`）** — 任意のページを丸ごと囲むイースターエッグ／ジョークコンポーネント（JigsawPuzzle / ShatterGlass / CheatCode / Pixelate）。
